@@ -1,6 +1,6 @@
 {
   "name": "mtg-diviner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Magic: The Gathering card guessing game.",
   "author": {
     "name": "Garrett Gardner",
@@ -47,6 +47,6 @@
     "dev:sass": "npx sass --watch --load-path=src/client/features src/client/sass:public/assets/stylesheets",
     "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:sass\"",
     "dbprocess": "npx ts-node src/server/db/dbprocess.ts",
-    "build": "npx ts-node src/server/copy.js && webpack --env environment=production && npx sass src/client/sass:public/assets/stylesheets --style=compressed --no-source-map"
+    "build": "npx ts-node src/server/copy.ts && webpack --env environment=production && npx sass src/client/sass:public/assets/stylesheets --style=compressed --no-source-map"
   }
 }
