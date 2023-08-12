@@ -1,0 +1,30 @@
+.icon-button {
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 900;
+  opacity: 0.5;
+  padding: 44px 0 0;
+  position: absolute;
+  text-align: center;
+  text-transform: uppercase;
+  transition: opacity 0.25s ease;
+  width: 42px;
+
+  &::before {
+    background: transparent none no-repeat center center;
+    background-size: contain;
+    content: "";
+    display: block;
+    height: 42px;
+    left: 50%;
+    margin-left: -21px;
+    position: absolute;
+    top: 0;
+    width: 42px;
+  }
+
+  &:hover,
+  &:focus {
+    opacity: 1;
+  }
+}

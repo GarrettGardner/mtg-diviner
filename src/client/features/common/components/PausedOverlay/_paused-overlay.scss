@@ -1,0 +1,22 @@
+.paused-overlay {
+  align-items: center;
+  background: rgba($color-white, 0.98);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 901;
+
+  .paused-overlay__header {
+    font-size: 90px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 64px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+}

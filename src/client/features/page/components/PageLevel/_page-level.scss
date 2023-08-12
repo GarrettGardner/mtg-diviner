@@ -1,0 +1,387 @@
+@use "sass:math";
+
+$crystalWidth: 460px;
+$waveDuration: 20s;
+
+.page--level {
+  .icon-button--pause {
+    right: 138px;
+    top: 32px;
+
+    &::before {
+      background-image: url("../images/icon-pause.png");
+    }
+  }
+
+  .crystal {
+    background: transparent url("../images/crystal-ball.png") no-repeat center center;
+    background-size: contain;
+    height: $crystalWidth * 1.2;
+    left: 50%;
+    margin-left: -$crystalWidth * 0.5;
+    overflow: hidden;
+    position: absolute;
+    top: 500px;
+    width: $crystalWidth;
+
+    .crystal__fill__wrap {
+      clip-path: url(#crystalFillPath);
+      height: $crystalWidth;
+      left: 0;
+      mix-blend-mode: multiply;
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      width: $crystalWidth;
+    }
+
+    .crystal__fill {
+      background: $color-purple;
+      height: $crystalWidth - 24px;
+      left: 8px;
+      mix-blend-mode: multiply;
+      opacity: 0.5;
+      position: absolute;
+      top: 24px;
+      transition: transform 0.25s ease;
+      width: $crystalWidth - 16px;
+
+      &.op--1 {
+        opacity: 0.7;
+      }
+
+      .crystal__fill__wave {
+        height: 100%;
+        left: 0;
+        overflow: hidden;
+        position: absolute;
+        top: -3%;
+        width: 100%;
+
+        &::before,
+        &::after {
+          animation-duration: $waveDuration;
+          animation-iteration-count: infinite;
+          animation-name: waves;
+          animation-timing-function: linear;
+          background: $color-purple;
+          border-radius: 50%;
+          content: "";
+          height: 40%;
+          left: 0;
+          position: absolute;
+          top: 0;
+          width: 80%;
+        }
+
+        &.op--1 {
+          &::before {
+            animation-delay: 0s;
+          }
+
+          &::after {
+            animation-delay: -$waveDuration * 0.25;
+          }
+        }
+
+        &.op--2 {
+          &::before {
+            animation-delay: -$waveDuration * 0.5;
+          }
+
+          &::after {
+            animation-delay: -$waveDuration * 0.75;
+          }
+        }
+
+        @at-root {
+          @keyframes waves {
+            0% {
+              transform: translate(-100%, 0);
+            }
+
+            100% {
+              transform: translate(100%, 0%);
+            }
+          }
+        }
+      }
+
+      .crystal__fill__sparkle {
+        animation-delay: -10s;
+        animation-iteration-count: infinite;
+        animation-name: sparkles;
+        animation-timing-function: linear;
+        background: $color-white;
+        border-radius: 50%;
+        height: 4%;
+        position: absolute;
+        width: 4%;
+
+        &.op--1 {
+          animation-duration: 8s;
+          height: 3%;
+          left: 6%;
+          top: 80%;
+          width: 3%;
+        }
+
+        &.op--2 {
+          animation-duration: 7.5s;
+          height: 5%;
+          left: 12%;
+          top: 70%;
+          width: 5%;
+        }
+
+        &.op--3 {
+          animation-duration: 3.5s;
+          height: 5%;
+          left: 25%;
+          top: 90%;
+          width: 5%;
+        }
+
+        &.op--4 {
+          animation-duration: 7s;
+          height: 3%;
+          left: 36%;
+          top: 82%;
+          width: 3%;
+        }
+
+        &.op--5 {
+          animation-duration: 4s;
+          height: 6%;
+          left: 41%;
+          top: 77%;
+          width: 6%;
+        }
+
+        &.op--6 {
+          animation-duration: 5s;
+          height: 4%;
+          left: 53%;
+          top: 83%;
+          width: 4%;
+        }
+
+        &.op--7 {
+          animation-duration: 6.5s;
+          height: 3%;
+          left: 65%;
+          top: 95%;
+          width: 3%;
+        }
+
+        &.op--8 {
+          animation-duration: 4.5s;
+          height: 5%;
+          left: 72%;
+          top: 79%;
+          width: 5%;
+        }
+
+        &.op--9 {
+          animation-duration: 6s;
+          height: 3%;
+          left: 85%;
+          top: 95%;
+          width: 3%;
+        }
+
+        &.op--10 {
+          animation-duration: 5.5s;
+          height: 5%;
+          left: 92%;
+          top: 91%;
+          width: 5%;
+        }
+
+        @at-root {
+          @keyframes sparkles {
+            0% {
+              opacity: 0;
+              transform: scale(0) translate(0, 0);
+            }
+
+            15% {
+              opacity: 1;
+            }
+
+            25% {
+              transform: scale(0.5) translate(20px, -100px);
+            }
+
+            50% {
+              transform: scale(1) translate(-20px, -200px);
+            }
+
+            75% {
+              transform: scale(1.5) translate(20px, -300px);
+            }
+
+            100% {
+              opacity: 1;
+              transform: scale(2) translate(20px, -400px);
+            }
+          }
+        }
+      }
+    }
+
+    .crystal__level {
+      align-items: center;
+      color: $color-black;
+      display: flex;
+      flex-direction: column;
+      font-size: 64px;
+      font-weight: 900;
+      height: 100%;
+      justify-content: center;
+      left: 0;
+      line-height: 1.25;
+      padding: 0 24px 24px;
+      position: absolute;
+      text-align: center;
+      text-shadow: 0 0 8px $color-white;
+      top: 0;
+      width: 100%;
+
+      .crystal__level__number {
+        font-size: 16px;
+        letter-spacing: 6px;
+        line-height: 1;
+        margin-bottom: 16px;
+        text-shadow: none;
+        text-transform: uppercase;
+
+        span {
+          background: rgba($color-black, 0.8);
+          border-radius: 12px;
+          color: $color-white;
+          padding: 2px 16px 0;
+        }
+      }
+
+      .crystal__level__label__type {
+        font-size: 32px;
+        font-weight: 500;
+        line-height: 1;
+        margin-bottom: 4px;
+      }
+
+      .crystal__level__label__era {
+        font-size: 24px;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 16px;
+      }
+
+      .crystal__cards {
+        display: flex;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+        width: 232px;
+
+        .crystal__card {
+          background: transparent url("../images/card-icon-pending.png") no-repeat center center;
+          background-size: contain;
+          border-radius: 6px;
+          display: block;
+          font-size: 12px;
+          height: 35px;
+          margin: 0 2px 4px;
+          text-align: center;
+          width: 25px;
+
+          &.op--active {
+            &.op--position-one {
+              background-image: url("../images/card-icon-one.png");
+            }
+            &.op--position-two {
+              background-image: url("../images/card-icon-two.png");
+            }
+            &.op--position-three {
+              background-image: url("../images/card-icon-three.png");
+            }
+          }
+
+          &.op--hidden {
+            background-image: url("../images/card-icon-hidden.png");
+          }
+
+          &.op--solved {
+            background-image: url("../images/card-icon-solved.png");
+          }
+
+          &.op--expired {
+            background-image: url("../images/card-icon-expired.png");
+          }
+        }
+      }
+
+      .crystal__level__points {
+        font-size: 36px;
+        line-height: 1.125;
+      }
+
+      .crystal__level__pointlabel {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 4px;
+        line-height: 1.125;
+        text-transform: uppercase;
+      }
+    }
+  }
+
+  .cards {
+    .card,
+    .cardbg {
+      height: 440px;
+      position: absolute;
+      top: 120px;
+      width: columnWidth(4);
+
+      &.op--position-one {
+        left: columnLeft(0);
+      }
+
+      &.op--position-two {
+        left: columnLeft(4);
+        top: 52px;
+      }
+
+      &.op--position-three {
+        left: columnLeft(8);
+      }
+    }
+
+    .cardbg {
+      @extend %hideContent;
+      background: transparent url("../images/bg-card-position.png") no-repeat center center;
+      background-size: contain;
+    }
+  }
+
+  .leaderboard {
+    left: columnLeft(0);
+    top: 600px;
+    width: columnWidth(4);
+  }
+
+  .guess-input {
+    left: columnLeft(8);
+    position: absolute;
+    top: 650px;
+    width: columnWidth(4);
+  }
+
+  .twitch-connection-card {
+    left: columnLeft(9);
+    position: absolute;
+    top: 820px;
+    width: columnWidth(3);
+  }
+}

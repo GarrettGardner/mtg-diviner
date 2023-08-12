@@ -1,0 +1,72 @@
+.twitch-connection-card {
+  align-items: center;
+  background: linear-gradient(to top, #a0a0a0, #e0e0e0);
+  border-radius: 16px;
+  box-shadow:
+    0 0 0 4px $color-black inset,
+    0 0 0 10px #f0f0f0 inset,
+    0 12px 0 -4px rgba($color-black, 0.4);
+  color: $color-black;
+  display: flex;
+  margin: 0 auto;
+  padding: 16px;
+  position: relative;
+  width: columnWidth(3);
+
+  .twitch-connection-card__disconnect {
+    align-items: center;
+    background: $color-black;
+    border-radius: 50%;
+    color: $color-white;
+    cursor: pointer;
+    display: flex;
+    font-size: 14px;
+    font-weight: 900;
+    height: 20px;
+    justify-content: center;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    transition: background 0.25s ease;
+    width: 20px;
+
+    span {
+      @extend %hideContent;
+      display: block;
+    }
+
+    &:hover,
+    &:active {
+      background-color: $color-red;
+    }
+  }
+
+  .twitch-connection-card__avatar {
+    background: transparent none no-repeat center center;
+    background-size: cover;
+    border-radius: 50%;
+    height: 60px;
+    margin-right: 16px;
+    width: 60px;
+  }
+
+  .twitch-connection-card__info {
+    text-align: left;
+
+    .twitch-connection-card__username {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .twitch-connection-card__label {
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+  }
+}

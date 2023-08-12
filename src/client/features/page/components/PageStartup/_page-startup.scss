@@ -1,0 +1,105 @@
+.page--startup {
+  .page__logo {
+    left: columnLeft(3);
+    top: -58px;
+    width: columnWidth(6);
+  }
+
+  .page--startup__content {
+    font-size: 32px;
+    font-weight: 400;
+    left: columnLeft(1);
+    line-height: 1.5;
+    position: absolute;
+    text-align: center;
+    top: 290px;
+    width: columnWidth(10);
+  }
+
+  .page--startup__rules {
+    display: flex;
+    margin-bottom: 48px;
+
+    li {
+      flex: 0 0 auto;
+      font-size: 32px;
+      line-height: 1.25;
+      list-style-type: none;
+      padding-left: 100px;
+      padding-right: 40px;
+      position: relative;
+      text-align: left;
+      width: 33.3333%;
+
+      &::after {
+        align-items: center;
+        background: $color-purple;
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 2px $color-black inset,
+          0 0 0 6px $color-white inset;
+        color: $color-white;
+        content: "1";
+        display: flex;
+        font-size: 36px;
+        font-weight: 900;
+        height: 80px;
+        justify-content: center;
+        left: 0;
+        position: absolute;
+        text-align: center;
+        top: 0;
+        width: 80px;
+      }
+
+      &:nth-child(2) {
+        &::after {
+          content: "2";
+        }
+      }
+
+      &:nth-child(3) {
+        &::after {
+          content: "3";
+        }
+      }
+    }
+  }
+
+  .page--startup__policy {
+    font-size: 16px;
+    font-weight: 400;
+    left: columnLeft(0);
+    line-height: 1.25;
+    position: absolute;
+    text-align: left;
+    top: 850px;
+    width: columnWidth(4);
+  }
+
+  .page--startup__twitch-connection {
+    height: 92px;
+    left: columnLeft(9);
+    position: absolute;
+    top: 820px;
+    width: columnWidth(3);
+
+    .icon--loading {
+      background: transparent url("../images/loading.gif") no-repeat center center;
+      background-size: cover;
+      content: "";
+      display: block;
+      height: 80px;
+      left: 50%;
+      margin: -40px 0 0 -40px;
+      opacity: 0.15;
+      overflow: hidden;
+      pointer-events: none;
+      position: absolute;
+      text-indent: -9999px;
+      top: 50%;
+      transition: opacity 0.5s ease;
+      width: 80px;
+    }
+  }
+}

@@ -1,0 +1,18 @@
+.page--error {
+  .page--error__content {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    left: columnLeft(3);
+    padding: 200px 0;
+    text-align: center;
+    width: columnWidth(6);
+  }
+
+  .page--error__text {
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: 64px;
+  }
+}

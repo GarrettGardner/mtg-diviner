@@ -1,0 +1,553 @@
+@use "sass:math";
+
+$timerCardLength: 20;
+$cardWidth: 280px;
+$cardDetailsTextMargin: 8px;
+
+.card {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  .card__hint {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 440px;
+    justify-content: center;
+    left: 0;
+    position: relative;
+    top: 0;
+    width: 440px;
+
+    &::before {
+      background: $color-black;
+      border-radius: 8px 8px 0 0;
+      box-shadow:
+        0 0 0 8px $color-black,
+        0 0 12px 12px rgba($color-black, 0.5);
+      content: "";
+      display: block;
+      height: calc(100% - 60px);
+      left: $cardDetailsTextMargin;
+      position: absolute;
+      top: 30px;
+      width: calc(100% - $cardDetailsTextMargin * 2);
+    }
+
+    .card__hint__art {
+      align-items: center;
+      background: transparent url("../images/pattern-gray-bg.jpg") repeat center center;
+      border: 6px solid $color-white;
+      display: flex;
+      flex: 0 0 auto;
+      height: 302px;
+      justify-content: flex-start;
+      margin: -6px $cardDetailsTextMargin 0;
+      overflow: hidden;
+      position: relative;
+      width: calc(100% - $cardDetailsTextMargin * 2);
+      z-index: 203;
+
+      .card__hint__art__img {
+        background: transparent none no-repeat center center;
+        background-size: 100% auto;
+        border: 2px solid $color-black;
+        height: 100%;
+        left: 0;
+        overflow: hidden;
+        position: absolute;
+        text-align: left;
+        text-indent: -999rem;
+        top: 0;
+        width: 100%;
+
+        img {
+          display: inline;
+        }
+      }
+    }
+
+    .card__hint__header,
+    .card__hint__typeline {
+      align-items: center;
+      background: transparent url("../images/pattern-gray-bg.jpg") repeat center center;
+      border-radius: 20px/40px;
+      border: 6px solid $color-white;
+      box-shadow:
+        0 0 0 2px $color-black inset,
+        0 0 0 8px $color-black,
+        0 0 12px 12px rgba($color-black, 0.5);
+      display: flex;
+      flex: 0 0 auto;
+      font-size: 30px;
+      font-weight: 700;
+      height: 72px;
+      justify-content: space-between;
+      overflow: hidden;
+      padding: 0 18px;
+      position: relative;
+      white-space: nowrap;
+      width: calc(100% + 16px);
+
+      &::before {
+        border-bottom: 6px solid rgba($color-black, 0.3);
+        border-left: 6px solid rgba($color-black, 0.2);
+        border-radius: 16px/36px;
+        border-right: 6px solid rgba($color-white, 0.8);
+        border-top: 6px solid rgba($color-white, 0.5);
+        content: "";
+        height: calc(100% - 4px);
+        left: 2px;
+        position: absolute;
+        top: 2px;
+        width: calc(100% - 4px);
+      }
+
+      .card__shade {
+        @extend %fullSize;
+        mix-blend-mode: multiply;
+        overflow: hidden;
+        text-indent: -9999px;
+      }
+    }
+
+    .card__hint__header {
+      z-index: 201;
+
+      .card__hint__header__name {
+        font-size: 42px;
+        font-weight: 900;
+        letter-spacing: 8px;
+      }
+
+      .card__hint__header__cost {
+        align-items: center;
+        display: flex;
+
+        .ms {
+          box-shadow:
+            2px 0 $color-black,
+            0 2px $color-black,
+            0 -2px $color-black,
+            -2px 0 $color-black,
+            -1px -1px $color-black,
+            1px 1px $color-black,
+            -1px 1px $color-black,
+            1px -1px $color-black;
+          display: block;
+          font-size: 26px;
+          margin: 0 0 0 6px;
+        }
+      }
+    }
+
+    .card__hint__typeline {
+      margin-top: -6px;
+      z-index: 202;
+
+      .card__hint__typeline__type {
+        flex: 1 1 auto;
+        font-size: 28px;
+        overflow: hidden;
+      }
+
+      .card__hint__typeline__set {
+        color: $color-white;
+        flex: 0 0 auto;
+        padding-left: 18px;
+
+        .ss {
+          font-size: 52px;
+          text-shadow:
+            2px 0 $color-black,
+            0 2px $color-black,
+            0 -2px $color-black,
+            -2px 0 $color-black,
+            -1px -1px $color-black,
+            1px 1px $color-black,
+            -1px 1px $color-black,
+            1px -1px $color-black;
+
+          &.ss-common {
+            color: $color-white;
+          }
+        }
+      }
+    }
+  }
+
+  .card__name {
+    background: $color-white;
+    border-radius: 16px;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1.125;
+    padding: 4px 12px;
+    position: absolute;
+    top: 70%;
+  }
+
+  .card__fullimage {
+    background: transparent none no-repeat center center;
+    background-size: contain;
+    border-radius: 12px;
+    height: $cardWidth * 1.4;
+    left: 50%;
+    margin-left: -($cardWidth * 0.5);
+    margin-top: -($cardWidth * 0.7);
+    overflow: hidden;
+    position: absolute;
+    text-align: left;
+    text-indent: -999rem;
+    top: 50%;
+    visibility: hidden;
+    width: $cardWidth;
+
+    img {
+      display: inline;
+    }
+  }
+
+  .card__expired,
+  .card__solver {
+    font-weight: 900;
+    left: 0;
+    line-height: 1;
+    position: absolute;
+    text-align: center;
+    text-shadow:
+      -2px -2px 0 $color-black,
+      2px -2px 0 $color-black,
+      -2px 2px 0 $color-black,
+      2px 2px 0 $color-black,
+      0 0 16px $color-black;
+    text-transform: uppercase;
+    top: 110px;
+    visibility: hidden;
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  .card__expired {
+    color: $color-red;
+    font-size: 52px;
+  }
+
+  .card__solver {
+    color: $color-green;
+
+    .card__solver__points {
+      font-size: 64px;
+    }
+
+    .card__solver__username {
+      font-size: 32px;
+    }
+  }
+
+  .card__timer {
+    $cardTimerHeight: 60px;
+    background-color: $color-red;
+    border-radius: 50%;
+    border: 3px solid $color-white;
+    box-shadow: 0 0 0 3px $color-black;
+    height: $cardTimerHeight;
+    left: 50%;
+    margin-left: -$cardTimerHeight * 0.5;
+    margin-top: -$cardTimerHeight * 0.5 + 6px;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    width: $cardTimerHeight;
+
+    &::before {
+      background: linear-gradient(to bottom, rgba($color-black, 0.2), rgba($color-black, 0.4));
+      border-radius: 50%;
+      content: "";
+      height: 100%;
+      left: 0%;
+      position: absolute;
+      top: 0%;
+      width: 100%;
+    }
+
+    &::after {
+      align-items: center;
+      color: $color-white;
+      content: "0";
+      display: flex;
+      font-size: 28px;
+      font-weight: 900;
+      height: 100%;
+      justify-content: center;
+      left: 0;
+      line-height: 1;
+      position: absolute;
+      text-shadow:
+        -1px 0 0 rgba($color-black, 0.9),
+        1px 0 0 rgba($color-black, 0.9),
+        0 1px 0 rgba($color-black, 0.9),
+        0 -1px 0 rgba($color-black, 0.9);
+      top: 0;
+      width: 100%;
+
+      @at-root {
+        @keyframes timerPulse {
+          40%,
+          80% {
+            transform: none;
+          }
+
+          50% {
+            transform: scale(1.25);
+          }
+        }
+
+        @keyframes timerCardCountdown {
+          0% {
+            content: "#{$timerCardLength}";
+          }
+
+          @for $i from 1 through $timerCardLength {
+            #{ math.div(100% * $i, $timerCardLength) } {
+              content: "#{$timerCardLength - $i}";
+            }
+          }
+
+          100% {
+            content: "0";
+          }
+        }
+
+        @keyframes timerCardCountdownColor {
+          0%,
+          20% {
+            background: $color-green;
+          }
+
+          25%,
+          75% {
+            background: $color-yellow;
+          }
+
+          80%,
+          100% {
+            background: $color-red;
+          }
+        }
+      }
+    }
+  }
+
+  &.op--status-pending {
+    height: 0;
+    opacity: 0;
+    width: 0;
+    visibility: hidden;
+  }
+
+  &.op--status-active {
+    opacity: 1;
+    visibility: visible;
+
+    .card__hint {
+      animation: bouncein 1s linear 0s normal forwards;
+      opacity: 0;
+      transform: scale3d(0, 0, 0);
+    }
+
+    .card__timer {
+      animation:
+        bouncein 1s linear 0s 1 normal forwards,
+        timerCardCountdownColor #{$timerCardLength}s ease 0s 1 normal forwards;
+      opacity: 0;
+      transform: scale3d(0, 0, 0);
+
+      .op--game-status-paused & {
+        animation-play-state: paused;
+      }
+
+      &::after {
+        animation:
+          timerCardCountdown #{$timerCardLength}s step-end 0s 1 normal forwards,
+          timerPulse 1s ease 0.5s $timerCardLength normal none;
+
+        .op--game-status-paused & {
+          animation-play-state: paused;
+        }
+      }
+    }
+  }
+
+  &.op--status-expired {
+    animation: cardExpired 0.35s linear 2.65s 1 normal forwards;
+    z-index: 201;
+
+    @at-root {
+      @keyframes cardExpired {
+        from {
+          opacity: 1;
+          transform: scale3d(1, 1, 1) rotate(0);
+        }
+
+        to {
+          opacity: 0;
+          transform: scale3d(0.1, 0.1, 0.1) rotate(360deg * 2);
+        }
+      }
+    }
+
+    .card__fullimage {
+      animation: bouncein 1s linear 0s 1 normal forwards;
+      visibility: visible;
+    }
+
+    .card__hint {
+      animation: fadeout 0.2s linear 0s 1 normal forwards;
+    }
+
+    .card__timer {
+      animation: fadeout 0.2s linear 0s 1 normal forwards;
+    }
+
+    .card__expired {
+      animation: bouncein 1s linear 0s 1 normal forwards;
+      visibility: visible;
+    }
+  }
+
+  &.op--status-solved {
+    animation: cardSolved 0.25s linear 2.5s 1 normal forwards;
+    visibility: visible;
+    z-index: 201;
+
+    @at-root {
+      @keyframes cardSolved {
+        from {
+          opacity: 1;
+          transform: scale3d(1, 1, 1);
+        }
+
+        50% {
+          opacity: 0.7;
+        }
+
+        99%,
+        to {
+          left: columnLeft(4);
+          top: 460px;
+          opacity: 0;
+          transform: scale3d(0.35, 0.35, 0.35);
+        }
+
+        to {
+          transform: scale3d(1, 1, 1);
+          visibility: hidden;
+        }
+      }
+    }
+
+    .card__hint {
+      animation: fadeout 0.2s linear 0s 1 normal forwards;
+    }
+
+    .card__timer {
+      visibility: hidden;
+    }
+
+    .card__fullimage {
+      animation: bouncein 1s linear 0s 1 normal forwards;
+      visibility: visible;
+    }
+
+    .card__solver {
+      animation: bouncein 1s linear 0s 1 normal forwards;
+      visibility: visible;
+    }
+  }
+
+  &.op--color-c {
+    .card__shade {
+      background-color: rgba($color-mtg-colorless, 0.2);
+    }
+
+    .card__hint__art,
+    .card__hint__header,
+    .card__hint__typeline {
+      border-color: $color-mtg-colorless;
+    }
+  }
+
+  &.op--color-w {
+    .card__shade {
+      background-color: transparent;
+    }
+
+    .card__hint__art,
+    .card__hint__header,
+    .card__hint__typeline {
+      border-color: $color-white;
+    }
+  }
+
+  &.op--color-u {
+    .card__shade {
+      background-color: rgba($color-mtg-blue, 0.2);
+    }
+
+    .card__hint__art,
+    .card__hint__header,
+    .card__hint__typeline {
+      border-color: $color-mtg-blue;
+    }
+  }
+
+  &.op--color-b {
+    .card__shade {
+      background-color: rgba($color-mtg-black, 0.2);
+    }
+
+    .card__hint__art,
+    .card__hint__header,
+    .card__hint__typeline {
+      border-color: $color-mtg-black;
+    }
+  }
+
+  &.op--color-r {
+    .card__shade {
+      background-color: rgba($color-mtg-red, 0.2);
+    }
+
+    .card__hint__art,
+    .card__hint__header,
+    .card__hint__typeline {
+      border-color: $color-mtg-red;
+    }
+  }
+
+  &.op--color-g {
+    .card__shade {
+      background-color: rgba($color-mtg-green, 0.2);
+    }
+
+    .card__hint__art,
+    .card__hint__header,
+    .card__hint__typeline {
+      border-color: $color-mtg-green;
+    }
+  }
+
+  &.op--color-m {
+    .card__shade {
+      background-color: rgba($color-mtg-multicolored, 0.85);
+    }
+
+    .card__hint__art,
+    .card__hint__header,
+    .card__hint__typeline {
+      border-color: $color-mtg-multicolored;
+    }
+  }
+}

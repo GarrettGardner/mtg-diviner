@@ -1,0 +1,52 @@
+{
+  "name": "mtg-diviner",
+  "version": "1.0.0",
+  "description": "Magic: The Gathering card guessing game.",
+  "author": {
+    "name": "Garrett Gardner",
+    "email": "hello@garrett-gardner.com",
+    "url": "https://garrett-gardner.com"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "path": "^0.12.7",
+    "pg": "^8.11.2"
+  },
+  "devDependencies": {
+    "@redux-devtools/core": "^3.13.1",
+    "@reduxjs/toolkit": "^1.9.5",
+    "@types/axios": "^0.14.0",
+    "@types/fs-extra": "^11.0.1",
+    "@types/fuzzyset": "^1.0.4",
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "^18.2.7",
+    "@types/tmi.js": "^1.8.3",
+    "axios": "^1.4.0",
+    "eslint": "^8.46.0",
+    "fs-extra": "^11.1.1",
+    "fuzzyset": "^1.0.7",
+    "prettier": "^3.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.1.2",
+    "redux": "^4.2.1",
+    "sass": "^1.64.2",
+    "stream-json": "^1.8.0",
+    "tmi.js": "^1.8.5",
+    "ts-loader": "^9.4.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "scripts": {
+    "dev:server": "node src/server/server.js",
+    "dev:client": "webpack --env envirnoment=development --watch",
+    "dev:sass": "npx sass --watch --load-path=src/client/features src/client/sass:public/assets/stylesheets",
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:sass\"",
+    "dbprocess": "npx ts-node src/server/db/dbprocess.ts",
+    "build": "npx ts-node src/server/copy.js && webpack --env environment=production && npx sass src/client/sass:public/assets/stylesheets --style=compressed --no-source-map"
+  }
+}

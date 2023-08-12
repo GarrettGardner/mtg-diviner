@@ -1,0 +1,21 @@
+.twitch-connection-connect {
+  background: $color-gray-light-ultra;
+  border-radius: 16px;
+  border: 4px dashed $color-gray-light-medium;
+  color: $color-gray-light-medium;
+  display: block;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0 auto;
+  padding: 28px 4px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+
+  &:hover,
+  &:active {
+    background: $color-gray-light;
+    color: $color-white;
+  }
+}

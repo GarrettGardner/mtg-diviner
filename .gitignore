@@ -1,0 +1,6 @@
+.DS_STORE
+.env
+package-lock.json
+/node_modules
+/public
+/src/server/db/files

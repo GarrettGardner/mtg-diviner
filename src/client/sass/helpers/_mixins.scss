@@ -1,0 +1,21 @@
+@function columnWidth($number: 1) {
+  @return $columnWidth * ($number) + $gutterWidth * ($number - 1);
+}
+
+@function columnLeft($number: 1) {
+  @return $borderMargin + (($columnWidth * ($number)) + ($gutterWidth * ($number)));
+}
+
+%fullSize {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+%hideContent {
+  text-align: left;
+  text-indent: -999rem;
+  overflow: hidden;
+}

@@ -1,0 +1,63 @@
+.guess-input {
+  background: $color-white;
+  border-radius: 16px;
+  border: 2px solid $color-black;
+  box-shadow: 0 12px 0 -12px rgba($color-black, 0.4);
+  overflow: hidden;
+  position: relative;
+  text-transform: uppercase;
+  transition: background 0.25s ease;
+  width: columnWidth(4);
+
+  form {
+    align-items: stretch;
+    display: flex;
+    justify-content: center;
+  }
+
+  input[type="text"].guess-input__text {
+    border: 0 none;
+    color: $color-black;
+    flex: 1 1 auto;
+    font-size: 24px;
+    line-height: 1;
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .guess-input__button {
+    background: $color-purple;
+    color: $color-white;
+    cursor: pointer;
+    flex: 0 0 auto;
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    padding: 0 12px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+
+    &::before {
+      background-color: rgba($color-black, 0.2);
+      bottom: 0;
+      content: "";
+      height: 8px;
+      left: 0;
+      position: absolute;
+      transition: height 0.25s ease;
+      width: 100%;
+    }
+
+    &:hover,
+    &:active {
+      &::before {
+        height: 100%;
+      }
+    }
+
+    span {
+      position: relative;
+    }
+  }
+}

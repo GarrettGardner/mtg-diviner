@@ -1,0 +1,8 @@
+.icon-button--fullscreen {
+  right: 32px;
+  top: 32px;
+
+  &::before {
+    background-image: url("../images/icon-fullscreen.png");
+  }
+}

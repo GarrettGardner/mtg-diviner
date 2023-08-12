@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="<%= PUBLIC_URL %>/favicon.ico" />
+
+    <title><%= TITLE %></title>
+
+    <meta name="apple-mobile-web-app-title" content="<%= TITLE %>" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta name="msapplication-TileColor" content="#7d53de" />
+    <meta name="theme-color" content="#7d53de" />
+
+    <link rel="shortlink" href="<%= PUBLIC_URL %>" />
+
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="<%= TITLE %>" />
+    <meta property="og:description" content="<%= DESCRIPTION %>" />
+    <meta property="og:url" content="<%= PUBLIC_URL %>" />
+    <meta property="og:site_name" content="<%= TITLE %>" />
+    <meta property="og:image" content="<%= PUBLIC_URL %>/assets/images/mtg-diviner-social-card-1200x628.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="628" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= TITLE %>" />
+    <meta name="twitter:description" content="<%= DESCRIPTION %>" />
+    <meta name="twitter:image" content="<%= PUBLIC_URL %>/assets/images/mtg-diviner-social-card-1200x628.jpg" />
+
+    <meta http-equiv="cache-control" content="max-age=0" />
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="pragma" content="no-cache" />
+
+    <meta name="description" content="<%= DESCRIPTION %>" />
+
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito%3A300%2C400%2C700%2C900" type="text/css" media="all" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/keyrune@latest/css/keyrune.css" type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mana-font@latest/css/mana.min.css" type="text/css" />
+
+    <link rel="stylesheet" href="<%= PUBLIC_URL %>/assets/stylesheets/screen.css" type="text/css" />
+
+    <% if (MODE === 'production' && GOOGLE_ANALYTICS) { %>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%= GOOGLE_ANALYTICS %>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "<%= GOOGLE_ANALYTICS %>");
+    </script>
+    <% } %>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="<%= PUBLIC_URL %>/assets/javascript/app.js?v=<%= VERSION %>"></script>
+  </body>
+</html>

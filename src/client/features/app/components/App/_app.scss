@@ -1,0 +1,105 @@
+$appHeight: 1080px;
+$appWidth: 1920px;
+
+$mainGutter: 60px;
+$mainHeight: $appHeight - $mainGutter * 2;
+$mainWidth: $appWidth - $mainGutter * 2;
+
+.app {
+  height: $appHeight;
+  left: 50%;
+  margin-left: -($appWidth * 0.5);
+  margin-top: -($appHeight * 0.5);
+  position: absolute;
+  top: 50%;
+  transform-origin: center center;
+  width: $appWidth;
+
+  .app__main {
+    background: transparent url("../images/bg-gameboard.jpg") no-repeat center center;
+    background-size: cover;
+    border-radius: 32px;
+    box-shadow:
+      0 0 0 2px $color-black inset,
+      0 0 0 2px $color-yellow inset,
+      0 0 0 20px $color-purple inset;
+    height: $mainHeight;
+    left: $mainGutter;
+    position: absolute;
+    top: $mainGutter;
+    transform-origin: center center;
+    width: $mainWidth;
+
+    &::before {
+      background: transparent url("../images/loading.gif") no-repeat center center;
+      background-size: cover;
+      content: "";
+      display: block;
+      height: 500px;
+      left: 50%;
+      margin: -250px 0 0 -250px;
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      top: 50%;
+      transition: opacity 0.5s ease;
+      width: 500px;
+    }
+
+    &.op--status-loading {
+      &::before {
+        opacity: 0.15;
+      }
+    }
+
+    &.op--status-exiting {
+      .page__item {
+        animation: bounceout 0.5s;
+        animation-fill-mode: forwards;
+      }
+    }
+
+    &.op--status-entering {
+      .page__item {
+        animation: bouncein 0.5s;
+        animation-fill-mode: forwards;
+      }
+    }
+  }
+
+  .app__footer {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    left: $mainGutter;
+    padding: 8px 24px;
+    position: absolute;
+    top: $mainGutter + $mainHeight;
+    width: $mainWidth;
+
+    .app__credits {
+      color: $color-white;
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      opacity: 0.75;
+      text-transform: uppercase;
+
+      p {
+        margin-bottom: 8px;
+      }
+
+      a {
+        text-decoration: underline;
+      }
+    }
+
+    .app__version {
+      color: $color-white;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      opacity: 0.8;
+    }
+  }
+}

@@ -1,0 +1,140 @@
+.page--results {
+  .page__header {
+    font-size: 120px;
+    letter-spacing: 4px;
+    margin-bottom: 16px;
+    text-shadow: 0 6px $color-purple;
+  }
+
+  .page__subheader {
+    font-size: 32px;
+    margin-bottom: 0;
+  }
+
+  .page--results__content {
+    left: columnLeft(0);
+    padding: 0;
+    position: absolute;
+    text-align: center;
+    top: 80px;
+    width: columnWidth(7);
+  }
+
+  .page--results__level {
+    display: flex;
+    font-size: 24px;
+    font-weight: 900;
+    justify-content: center;
+    letter-spacing: 12px;
+    line-height: 1;
+    margin-bottom: 32px;
+    text-shadow: none;
+    text-transform: uppercase;
+
+    span {
+      background: rgba($color-black, 0.8);
+      border-radius: 32px;
+      color: $color-white;
+      display: block;
+      padding: 6px 24px 4px;
+    }
+  }
+
+  .page--results__cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    left: columnLeft(0);
+    position: absolute;
+    top: 400px;
+    width: columnWidth(12);
+
+    .card-recap {
+      animation: bouncein 0.5s linear 20s normal forwards;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      opacity: 0;
+      overflow: hidden;
+      position: relative;
+      transition: 0.25s ease transform;
+      transform: scale3d(0, 0, 0);
+      width: calc(8.333333% - 8px);
+
+      @for $i from 1 through 32 {
+        &:nth-child(#{$i}n) {
+          animation-delay: #{($i * 0.0625) - 0.0625}s;
+        }
+      }
+
+      &.op--expanded {
+        transform: scale(2.5) !important;
+        z-index: 902;
+      }
+
+      .card-recap__img {
+        padding-top: 140%;
+
+        img {
+          display: block;
+          height: 100%;
+          left: 0;
+          position: absolute;
+          top: 0;
+          width: 100%;
+        }
+      }
+
+      .card-recap__status {
+        align-items: center;
+        display: flex;
+        font-weight: 900;
+        height: 42%;
+        justify-content: center;
+        left: 10%;
+        line-height: 1;
+        position: absolute;
+        text-align: center;
+        text-shadow:
+          -1px -1px 0 $color-black,
+          1px -1px 0 $color-black,
+          -1px 1px 0 $color-black,
+          1px 1px 0 $color-black,
+          0 0 16px $color-black;
+        text-transform: uppercase;
+        top: 12%;
+        white-space: nowrap;
+        width: 80%;
+
+        .card-recap__status__text {
+          &.op--expired {
+            color: $color-red;
+            font-size: 28px;
+          }
+
+          &.op--solved {
+            color: $color-green;
+
+            .points {
+              font-size: 24px;
+            }
+
+            .solver {
+              font-size: 16px;
+              overflow-wrap: anywhere;
+              white-space: normal;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .page--results__buttons {
+    left: columnLeft(0);
+    position: absolute;
+    text-align: center;
+    top: 810px;
+    width: columnWidth(12);
+  }
+}

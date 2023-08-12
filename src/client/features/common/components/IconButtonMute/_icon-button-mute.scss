@@ -1,0 +1,12 @@
+.icon-button--mute {
+  right: 84px;
+  top: 32px;
+
+  &::before {
+    background-image: url("../images/icon-mute.png");
+  }
+
+  &.op--muted::before {
+    background-image: url("../images/icon-unmute.png");
+  }
+}
