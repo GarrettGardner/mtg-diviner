@@ -1,4 +1,5 @@
 import FuzzySet from "fuzzyset";
+import replaceSpecialCharacters from "replace-special-characters";
 
 /* Extends window object to include debugMode */
 declare global {
@@ -8,16 +9,14 @@ declare global {
 }
 
 /* Sanitizes an input guess string */
-export const cleanGuess = (input: string): string => {
-  let output = input.trim().toLowerCase();
-  output = output.replace(/[^a-zA-Z0-9]/g, "");
-  return output;
-};
+export const cleanGuess = (input: string): string => replaceSpecialCharacters(input.trim().toLowerCase()).replace(/[^a-zA-Z0-9]/g, "");
 
 /* Compares guess string to answer and returns a score */
 export const fuzzyCompare = (needle: string, haystack: string): number => {
   const guessCompare = FuzzySet();
   guessCompare.add(cleanGuess(needle));
+  console.log(cleanGuess(needle));
+  console.log(cleanGuess(haystack));
   return guessCompare.get(cleanGuess(haystack))?.[0]?.[0] || 0;
 };
 

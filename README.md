@@ -9,6 +9,7 @@ Garrett Gardner (hello@garrett-gardner.com)
 ## Version History
 
 - v1.0
+  - Remove special characters from guesses (v1.0.2)
   - Fixed build process (v1.0.1)
   - Initial Release! (v1.0.0)
 
