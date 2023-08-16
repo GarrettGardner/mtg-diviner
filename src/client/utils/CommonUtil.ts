@@ -1,4 +1,5 @@
 import FuzzySet from "fuzzyset";
+import replaceSpecialCharacters from "replace-special-characters";
 
 /* Extends window object to include debugMode */
 declare global {
@@ -8,11 +9,7 @@ declare global {
 }
 
 /* Sanitizes an input guess string */
-export const cleanGuess = (input: string): string => {
-  let output = input.trim().toLowerCase();
-  output = output.replace(/[^a-zA-Z0-9]/g, "");
-  return output;
-};
+export const cleanGuess = (input: string): string => replaceSpecialCharacters(input.trim().toLowerCase()).replace(/[^a-zA-Z0-9]/g, "");
 
 /* Compares guess string to answer and returns a score */
 export const fuzzyCompare = (needle: string, haystack: string): number => {
@@ -24,7 +21,7 @@ export const fuzzyCompare = (needle: string, haystack: string): number => {
 /* Extracts mana cost into array to convert into icons */
 export const extractManaCost = (input: string): Array<string> => {
   let cost: string[] = [];
-  let costInput = input.replaceAll("{", "");
+  const costInput = input.replaceAll("{", "");
   costInput.split("}").forEach((costCurrent) => {
     const costItem = costCurrent.replace("/", "").toLowerCase();
     if (costItem.length > 0) {

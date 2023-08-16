@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@client/redux";
 import { APP_STATUS, appFacade } from "@client/features/app";
 import { Button, EraSelector } from "@client/features/common";
-import { levelEras, gameFacade } from "@client/features/game";
+import { LEVEL_MODIFIER_KEYS, levelEraOptions, gameFacade } from "@client/features/game";
 import { Page } from "@client/features/page";
 import { TwitchConnectionCard, TwitchConnectionConnect, twitchConnectionFacade } from "@client/features/twitch-connection";
 
@@ -10,11 +10,11 @@ export const PageStartup = () => {
   const app = useAppSelector(appFacade.selector);
   const twitchConnection = useAppSelector(twitchConnectionFacade.selector);
   const dispatch = useAppDispatch();
-  const [startEraKey, setStartEraKey] = useState(levelEras.length - 1);
+  const [startEra, setStartEra] = useState<keyof typeof levelEraOptions>(LEVEL_MODIFIER_KEYS.ERA_2019_NOW);
 
   const handleGameStart = () => {
     if (app.status === APP_STATUS.ACTIVE) {
-      dispatch(gameFacade.thunk.gameStart(startEraKey));
+      dispatch(gameFacade.thunk.gameStart(startEra));
     }
   };
 
@@ -29,7 +29,7 @@ export const PageStartup = () => {
             Connect your Twitch Account to play along with your chat <strong>OR</strong> play it solo!
           </li>
         </ul>
-        <EraSelector startEraKey={startEraKey} onSelect={setStartEraKey} />
+        <EraSelector startEraKey={startEra} onSelect={setStartEra} />
         <p>
           <Button classes="page__item" onClick={handleGameStart}>
             Play{!twitchConnection.connected ? " Solo" : ""}
@@ -38,7 +38,7 @@ export const PageStartup = () => {
       </div>
       <div className="page--startup__twitch-connection page__item">
         {twitchConnection.loading ? (
-          <div className="icon--loading">HELLO</div>
+          <div className="icon--loading">&nbsp;</div>
         ) : twitchConnection.connected ? (
           <TwitchConnectionCard />
         ) : (

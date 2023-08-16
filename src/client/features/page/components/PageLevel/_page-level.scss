@@ -231,10 +231,7 @@ $waveDuration: 20s;
     }
 
     .crystal__level {
-      align-items: center;
       color: $color-black;
-      display: flex;
-      flex-direction: column;
       font-size: 64px;
       font-weight: 900;
       height: 100%;
@@ -249,40 +246,81 @@ $waveDuration: 20s;
       width: 100%;
 
       .crystal__level__number {
-        font-size: 16px;
-        letter-spacing: 6px;
+        font-size: 20px;
+        left: 0;
+        letter-spacing: 8px;
         line-height: 1;
-        margin-bottom: 16px;
+        position: absolute;
         text-shadow: none;
         text-transform: uppercase;
+        top: 54px;
+        width: 100%;
 
         span {
           background: rgba($color-black, 0.8);
-          border-radius: 12px;
+          border-radius: 40px;
           color: $color-white;
-          padding: 2px 16px 0;
+          padding: 6px 24px 4px;
         }
       }
 
-      .crystal__level__label__type {
-        font-size: 32px;
-        font-weight: 500;
-        line-height: 1;
-        margin-bottom: 4px;
-      }
+      .crystal__level__labels {
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        height: 120px;
+        overflow: hidden;
+        position: absolute;
+        justify-content: center;
+        left: 0;
+        top: 88px;
+        width: 100%;
 
-      .crystal__level__label__era {
-        font-size: 24px;
-        font-weight: 900;
-        line-height: 1;
-        margin-bottom: 16px;
+        .crystal__level__label {
+          background-color: $color-gray-light-ultra;
+          align-items: stretch;
+          border: 2px solid $color-black;
+          border-radius: 14px;
+          height: 28px;
+          display: flex;
+          margin: 4px 0;
+          overflow: hidden;
+          text-shadow: none;
+          white-space: nowrap;
+          width: auto;
+
+          .crystal__level__label__type {
+            align-items: center;
+            background-color: $color-gray-dark;
+            color: $color-white;
+            display: flex;
+            font-size: 14px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            line-height: 1;
+            padding: 2px 8px 0 12px;
+            text-transform: uppercase;
+          }
+
+          .crystal__level__label__value {
+            align-items: center;
+            display: flex;
+            padding: 0 12px 0 8px;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1;
+          }
+        }
       }
 
       .crystal__cards {
         display: flex;
         flex-wrap: wrap;
-        margin-bottom: 16px;
-        width: 232px;
+        left: 50%;
+        margin-left: -174px;
+        position: absolute;
+        top: 228px;
+        width: 348px;
 
         .crystal__card {
           background: transparent url("../images/card-icon-pending.png") no-repeat center center;
@@ -322,16 +360,24 @@ $waveDuration: 20s;
       }
 
       .crystal__level__points {
-        font-size: 36px;
-        line-height: 1.125;
-      }
+        left: 0;
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        top: 320px;
 
-      .crystal__level__pointlabel {
-        font-size: 14px;
-        font-weight: 700;
-        letter-spacing: 4px;
-        line-height: 1.125;
-        text-transform: uppercase;
+        .crystal__level__point__total {
+          font-size: 36px;
+          line-height: 1.125;
+        }
+
+        .crystal__level__point__label {
+          font-size: 14px;
+          font-weight: 700;
+          letter-spacing: 4px;
+          line-height: 1.125;
+          text-transform: uppercase;
+        }
       }
     }
   }

@@ -121,8 +121,7 @@
 
             .solver {
               font-size: 16px;
-              overflow-wrap: anywhere;
-              white-space: normal;
+              white-space: no-wrap;
             }
           }
         }

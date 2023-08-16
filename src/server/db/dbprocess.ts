@@ -6,8 +6,10 @@ const { dbpool } = require(path.join(__dirname, "../inc/constants"));
 
 interface Card {
   id: string;
+  booster: boolean;
   color: string;
   cost: string;
+  date: string;
   image_art: string;
   image_full: string;
   name: string;
@@ -15,7 +17,6 @@ interface Card {
   set: string;
   set_type: string;
   type: string;
-  year: number;
 }
 
 enum LOG_TYPE {
@@ -68,7 +69,7 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     }
   }
   if (!color) {
-    logAction(LOG_TYPE.ERROR, `Malformed card structure: Released At.`, JSON.stringify(cardScryfall));
+    logAction(LOG_TYPE.ERROR, `Malformed card structure: Color.`, JSON.stringify(cardScryfall));
     return;
   }
 
@@ -116,8 +117,8 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     return;
   }
 
-  const year = Number(cardScryfall?.released_at?.slice(0, 4));
-  if (!year) {
+  const date = cardScryfall?.released_at;
+  if (!date || date.length !== 10) {
     logAction(LOG_TYPE.ERROR, `Malformed card structure: Released At.`, JSON.stringify(cardScryfall));
     return;
   }
@@ -132,10 +133,7 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     return;
   }
 
-  if (cardScryfall?.booster !== undefined && !cardScryfall.booster) {
-    logAction(LOG_TYPE.SKIP, `Card is not in boosters.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
-    return;
-  }
+  const booster = Boolean(cardScryfall?.booster);
 
   if (cardScryfall?.promo !== undefined && cardScryfall.promo) {
     logAction(LOG_TYPE.SKIP, `Card is a promo.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
@@ -176,8 +174,10 @@ const parseCard = (cardScryfall: any): Card | undefined => {
 
   return {
     id,
+    booster,
     color,
     cost,
+    date,
     image_art,
     image_full,
     name,
@@ -185,7 +185,6 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     set,
     set_type,
     type,
-    year,
   };
 };
 
@@ -202,7 +201,7 @@ const processDB = async () => {
   let numberSkipped = 0;
   let numberInserted = 0;
   const query =
-    "INSERT INTO card (id, color, cost, image_art, image_full, name, rarity, set, set_type, type, year) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id;";
+    "INSERT INTO card (id, booster, color, cost, date, image_art, image_full, name, rarity, set, set_type, type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id;";
 
   let stream = fse.createReadStream(PATH_SCRYFALL_JSON);
   stream
@@ -217,7 +216,20 @@ const processDB = async () => {
       numberSkipped++;
       return;
     }
-    const cardArray = [card.id, card.color, card.cost, card.image_art, card.image_full, card.name, card.rarity, card.set, card.set_type, card.type, card.year];
+    const cardArray = [
+      card.id,
+      card.booster,
+      card.color,
+      card.cost,
+      card.date,
+      card.image_art,
+      card.image_full,
+      card.name,
+      card.rarity,
+      card.set,
+      card.set_type,
+      card.type,
+    ];
     let hasError = false;
     await dbpool.query(query, cardArray).catch((e: Error) => {
       logAction(LOG_TYPE.ERROR, `DB Insert error: ${e.stack}`);

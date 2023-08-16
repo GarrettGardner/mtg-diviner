@@ -9,10 +9,10 @@ export const PageLevel = () => {
   const game = useAppSelector(gameFacade.selector);
   const dispatch = useAppDispatch();
 
-  const crystalFillOffset = 100 - Math.min(Math.floor((game.pointsCurrent / game.levels[game.levelActive].pointsRequired) * 100), 100);
+  const crystalFillOffset = 100 - Math.min(Math.floor((game.pointsCurrent / game.levels[game.levelActive].pointsPass) * 100), 100);
 
-  const additionalPoints = game.pointsCurrent - game.levels[game.levelActive].pointsRequired;
-  const pointsDifference = game.levels[game.levelActive].pointsRequired2 - game.levels[game.levelActive].pointsRequired;
+  const additionalPoints = game.pointsCurrent - game.levels[game.levelActive].pointsPass;
+  const pointsDifference = game.levels[game.levelActive].pointsSkip - game.levels[game.levelActive].pointsPass;
 
   const crystalFillOffset2 = additionalPoints <= 0 ? 100 : 100 - Math.min(Math.floor((additionalPoints / pointsDifference) * 100), 100);
 
@@ -63,17 +63,30 @@ export const PageLevel = () => {
             <div className="crystal__level__number">
               <span>Level {game.levels[game.levelActive].number}</span>
             </div>
-            <div className="crystal__level__label__type">{game.levels[game.levelActive].labelSetType}</div>
-            <div className="crystal__level__label__era">{game.levels[game.levelActive].labelEra}</div>
+            <div className="crystal__level__labels">
+              {Object.entries(game.levels[game.levelActive].labels).map(([type, label], key) => (
+                <div key={key} className="crystal__level__label">
+                  <div className="crystal__level__label__type">{type}</div>
+                  <div className="crystal__level__label__value">{label}</div>
+                </div>
+              ))}
+            </div>
             <div className="crystal__cards">
               {game.cards.map((card, key) => (
                 <div key={key} className={`crystal__card op--${card.status} op--position-${card.position}`}></div>
               ))}
             </div>
             <div className="crystal__level__points">
-              {game.pointsCurrent}/{game.levels[game.levelActive].pointsRequired}
+              <div className="crystal__level__point__total">
+                {game.pointsCurrent}/
+                {game.pointsCurrent < game.levels[game.levelActive].pointsPass
+                  ? game.levels[game.levelActive].pointsPass
+                  : game.levels[game.levelActive].pointsSkip}
+              </div>
+              <div className="crystal__level__point__label">
+                {game.pointsCurrent < game.levels[game.levelActive].pointsPass ? "Points To Pass" : "Points To Skip"}
+              </div>
             </div>
-            <div className="crystal__level__pointlabel">Points Required</div>
           </div>
         </div>
       </div>
