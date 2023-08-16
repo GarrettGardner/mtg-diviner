@@ -12,9 +12,11 @@ import {
   GAME_POSITION,
   CARD_STATUS,
   initialLevels,
-  levelEras,
+  levelEraOptions,
   POSITION_NONE,
   MAX_CARDS,
+  LEVEL_MODIFIER_KEYS,
+  generateLevel,
 } from "@client/features/game";
 import { soundStageFacade } from "@client/features/sound-stage";
 
@@ -164,13 +166,11 @@ const gameThunks = {
 
   /* Start the game from initial state */
   gameStart:
-    (startEraKey: number): AppThunk =>
+    (startEra: keyof typeof levelEraOptions): AppThunk =>
     (dispatch, getState) => {
-      debugMessage(`gameStart(${startEraKey})`);
+      debugMessage(`gameStart(${startEra})`);
 
-      const levelEra = levelEras[startEraKey];
-
-      let levels = initialLevels.map((a) => (a.number < 7 ? { ...a, ...levelEra } : { ...a }));
+      const levels = initialLevels.map((level) => (level.number < 7 ? generateLevel([startEra], { ...level }) : { ...level }));
 
       dispatch(gameFacade.action.START(levels));
       dispatch(appFacade.thunk.transitionOutPage(() => dispatch(gameFacade.thunk.levelLoad())));
@@ -183,7 +183,7 @@ const gameThunks = {
     const game = gameFacade.selector(getState());
 
     let advance = 1;
-    if (game.pointsCurrent >= game.levels[game.levelActive].pointsRequired2) {
+    if (game.pointsCurrent >= game.levels[game.levelActive].pointsSkip) {
       advance++;
     }
 
@@ -195,7 +195,7 @@ const gameThunks = {
         levels.push({
           ...levels[game.levelActive],
           number: levels[game.levelActive].number + i,
-          pointsRequired: Math.min(levels[game.levelActive].pointsRequired + i, MAX_CARDS),
+          pointsPass: Math.min(levels[game.levelActive].pointsPass + i, MAX_CARDS),
         });
         nextLevel = levels.length - 1;
       }
@@ -214,8 +214,10 @@ const gameThunks = {
 
     const game = gameFacade.selector(getState());
     const url = new URL("/cards", PUBLIC_URL);
-    Object.entries(game.levels[game.levelActive].apiParams).forEach((param) => {
-      url.searchParams.set(param[0], param[1]);
+    Object.entries(game.levels[game.levelActive].params).forEach((param) => {
+      if (param[0] && param[1]) {
+        url.searchParams.set(param[0], param[1]);
+      }
     });
 
     let apiError: AxiosError | undefined;
@@ -272,7 +274,7 @@ const gameThunks = {
     }
 
     // Check if they actually won the round
-    const gameStatus = game.pointsCurrent >= game.levels[game.levelActive].pointsRequired ? GAME_STATUS.INACTIVE : GAME_STATUS.LOST;
+    const gameStatus = game.pointsCurrent >= game.levels[game.levelActive].pointsPass ? GAME_STATUS.INACTIVE : GAME_STATUS.LOST;
 
     dispatch(gameFacade.action.UPDATE_STATUS(gameStatus));
 

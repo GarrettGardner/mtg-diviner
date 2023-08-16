@@ -32,17 +32,17 @@ app.get("/cards", (req, res) => {
 
   if (query) {
     let number = 1;
-    const minYear = query.minYear;
-    if (minYear) {
-      SQLwhere.push(`year >= $${number}`);
-      SQLparams.push(Number(minYear));
+    const minDate = query.minDate;
+    if (minDate) {
+      SQLwhere.push(`date >= $${number}`);
+      SQLparams.push(minDate);
       number++;
     }
 
-    const maxYear = query.maxYear;
-    if (maxYear) {
-      SQLwhere.push(`year <= $${number}`);
-      SQLparams.push(Number(maxYear));
+    const maxDate = query.maxDate;
+    if (maxDate) {
+      SQLwhere.push(`date <= $${number}`);
+      SQLparams.push(maxDate);
       number++;
     }
 
@@ -50,7 +50,7 @@ app.get("/cards", (req, res) => {
     if (setType) {
       switch (setType) {
         case "core-expansion":
-          SQLwhere.push(`(set_type = $${number} OR set_type = $${number + 1})`);
+          SQLwhere.push(`(set_type = $${number} OR set_type = $${number + 1}) AND booster = true`);
           SQLparams.push(`core`);
           SQLparams.push(`expansion`);
           number++;

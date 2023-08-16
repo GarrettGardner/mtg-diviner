@@ -1,14 +1,18 @@
 import React from "react";
-import { levelEras } from "@client/features/game";
+import { levelEraOptions } from "@client/features/game";
 
-export const EraSelector = (props: { startEraKey: number; onSelect: (key: number) => void }) => {
+export const EraSelector = (props: { startEraKey: keyof typeof levelEraOptions; onSelect: (key: keyof typeof levelEraOptions) => void }) => {
   return (
     <div className="page__item era-selector">
       <label className="era-selector__label">Choose a starting era</label>
       <fieldset className="era-selector__buttons">
-        {levelEras.map((levelEra, key) => (
-          <button className={`era-selector__button${props.startEraKey === key ? " op--selected" : ""}`} key={key} onClick={() => props.onSelect(key)}>
-            <span>{levelEra.labelEra}</span>
+        {Object.entries(levelEraOptions).map(([value, label], key) => (
+          <button
+            key={key}
+            className={`era-selector__button${props.startEraKey === value ? " op--selected" : ""}`}
+            onClick={() => props.onSelect(value as keyof typeof levelEraOptions)}
+          >
+            <span>{label}</span>
           </button>
         ))}
       </fieldset>

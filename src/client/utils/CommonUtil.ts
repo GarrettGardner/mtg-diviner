@@ -15,15 +15,13 @@ export const cleanGuess = (input: string): string => replaceSpecialCharacters(in
 export const fuzzyCompare = (needle: string, haystack: string): number => {
   const guessCompare = FuzzySet();
   guessCompare.add(cleanGuess(needle));
-  console.log(cleanGuess(needle));
-  console.log(cleanGuess(haystack));
   return guessCompare.get(cleanGuess(haystack))?.[0]?.[0] || 0;
 };
 
 /* Extracts mana cost into array to convert into icons */
 export const extractManaCost = (input: string): Array<string> => {
   let cost: string[] = [];
-  let costInput = input.replaceAll("{", "");
+  const costInput = input.replaceAll("{", "");
   costInput.split("}").forEach((costCurrent) => {
     const costItem = costCurrent.replace("/", "").toLowerCase();
     if (costItem.length > 0) {
