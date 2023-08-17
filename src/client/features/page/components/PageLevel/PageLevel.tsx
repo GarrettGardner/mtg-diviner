@@ -4,8 +4,10 @@ import { ICard, gameFacade } from "@client/features/game";
 import { Page } from "@client/features/page";
 import { TwitchConnectionCard } from "@client/features/twitch-connection";
 import { useAppDispatch, useAppSelector } from "@client/redux";
+import { appFacade } from "@client/features/app";
 
 export const PageLevel = () => {
+  const app = useAppSelector(appFacade.selector);
   const game = useAppSelector(gameFacade.selector);
   const dispatch = useAppDispatch();
 
@@ -18,6 +20,10 @@ export const PageLevel = () => {
 
   const handlePause = () => {
     dispatch(gameFacade.thunk.gamePause());
+  };
+
+  const handleSkip = () => {
+    dispatch(gameFacade.thunk.levelEnd(true));
   };
 
   return (
@@ -96,6 +102,11 @@ export const PageLevel = () => {
       <IconButton classes="icon-button--pause page__item" onClick={handlePause}>
         Pause
       </IconButton>
+      {app.debugMode && (
+        <IconButton classes="icon-button--skip page__item" onClick={handleSkip}>
+          Skip
+        </IconButton>
+      )}
     </Page>
   );
 };

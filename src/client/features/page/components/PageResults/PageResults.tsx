@@ -49,17 +49,23 @@ export const PageResults = () => {
         <p className="page--results__level page__item">
           <span>Level {game.levels[game.levelActive].number}</span>
         </p>
-        {game.status === GAME_STATUS.INACTIVE && (
-          <>
-            <h2 className="page__header page__item">Completed</h2>
-          </>
-        )}
-        {game.status === GAME_STATUS.LOST && (
-          <>
-            <h2 className="page__header page__item">Defeated</h2>
-          </>
-        )}
+        <h2 className="page__header page__item">
+          {game.status === GAME_STATUS.INACTIVE && "Completed"}
+          {game.status === GAME_STATUS.LOST && "Defeated"}
+        </h2>
         {message && <p className="page__subheader page__item">{message}</p>}
+        <p>
+          {game.status === GAME_STATUS.INACTIVE && (
+            <Button classes="page__item" onClick={handleGameNextLevel}>
+              Next Level
+            </Button>
+          )}
+          {game.status === GAME_STATUS.LOST && (
+            <Button classes="page__item" onClick={handleGameRestart}>
+              Try again?
+            </Button>
+          )}
+        </p>
       </div>
       <Leaderboard layout="large" players={game.leaderboard} />
       <div className="page--results__cards page__item">
@@ -85,24 +91,6 @@ export const PageResults = () => {
             </div>
           </div>
         ))}
-      </div>
-      <div className="page--results__buttons">
-        <p>
-          {game.status === GAME_STATUS.INACTIVE && (
-            <>
-              <Button classes="page__item" onClick={handleGameNextLevel}>
-                Next Level
-              </Button>
-            </>
-          )}
-          {game.status === GAME_STATUS.LOST && (
-            <>
-              <Button classes="page__item" onClick={handleGameRestart}>
-                Try again?
-              </Button>
-            </>
-          )}
-        </p>
       </div>
     </Page>
   );

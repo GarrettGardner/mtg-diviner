@@ -9,6 +9,7 @@ Garrett Gardner (hello@garrett-gardner.com)
 ## Version History
 
 - v1.0
+  - Add more debug tools (v1.0.3)
   - Revamp levelling system (v1.0.2)
   - Remove special characters from guesses (v1.0.2)
   - Fixed build process (v1.0.1)
