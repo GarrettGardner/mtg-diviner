@@ -25,20 +25,12 @@ export const App = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const updateDebugMode = () => {
-      const debugMode = !!window.debugMode;
-      if (app.debugMode !== debugMode) {
-        dispatch(appFacade.action.UPDATE_DEBUG_MODE(debugMode));
-      }
-    };
-
-    window.addEventListener("click", updateDebugMode);
-
-    return () => {
-      window.removeEventListener("click", updateDebugMode);
-    };
-  }, [app.debugMode]);
+  const handleDebugMode = () => {
+    if (app.debugMode || app.page === APP_PAGE.STARTUP) {
+      dispatch(appFacade.action.UPDATE_DEBUG_MODE(!app.debugMode));
+      window.debugMode = !app.debugMode;
+    }
+  };
 
   return (
     <>
@@ -69,6 +61,9 @@ export const App = () => {
               </a>
             </p>
           </div>
+          <button className={`app__debugmode ${app.debugMode ? " op--on" : ""}`} onClick={handleDebugMode}>
+            Debug Mode: {app.debugMode ? "On" : "Off"}
+          </button>
           <div className="app__version">v{VERSION}</div>
         </footer>
         <GameEngine />

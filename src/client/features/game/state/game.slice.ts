@@ -264,22 +264,34 @@ const gameThunks = {
   },
 
   /* Level ends and updates status */
-  levelEnd: (): AppThunk => (dispatch, getState) => {
-    debugMessage(`levelEnd()`);
+  levelEnd:
+    (override: boolean = false): AppThunk =>
+    (dispatch, getState) => {
+      debugMessage(`levelEnd(${override})`);
 
-    const game = gameFacade.selector(getState());
+      const game = gameFacade.selector(getState());
 
-    if (game.status !== GAME_STATUS.ACTIVE) {
-      return;
-    }
+      if (game.status !== GAME_STATUS.ACTIVE) {
+        return;
+      }
 
-    // Check if they actually won the round
-    const gameStatus = game.pointsCurrent >= game.levels[game.levelActive].pointsPass ? GAME_STATUS.INACTIVE : GAME_STATUS.LOST;
+      const cards = game.cards
+        .map((a) => ({ ...a }))
+        .map((card) => ({
+          ...card,
+          status: card.status === CARD_STATUS.ACTIVE || card.status === CARD_STATUS.PENDING ? CARD_STATUS.EXPIRED : card.status,
+        }));
 
-    dispatch(gameFacade.action.UPDATE_STATUS(gameStatus));
+      // Check if they actually won the round, or skip
+      const gameStatus = override || game.pointsCurrent >= game.levels[game.levelActive].pointsPass ? GAME_STATUS.INACTIVE : GAME_STATUS.LOST;
 
-    dispatch(appFacade.thunk.transitionPage(APP_PAGE.RESULTS));
-  },
+      dispatch(gameFacade.action.UPDATE_STATUS(gameStatus));
+      dispatch(gameFacade.action.UPDATE_CARDS(cards));
+
+      dispatch(gameFacade.action.CLEAN_COUNTDOWN_ACTIONS);
+
+      dispatch(appFacade.thunk.transitionPage(APP_PAGE.RESULTS));
+    },
 
   /* Activate a card in a given position */
   cardActivate:

@@ -1,14 +1,14 @@
 .page--results {
   .page__header {
-    font-size: 120px;
+    font-size: 110px;
     letter-spacing: 4px;
     margin-bottom: 16px;
     text-shadow: 0 6px $color-purple;
   }
 
   .page__subheader {
-    font-size: 32px;
-    margin-bottom: 0;
+    font-size: 42px;
+    margin-bottom: 160px;
   }
 
   .page--results__content {
@@ -16,8 +16,8 @@
     padding: 0;
     position: absolute;
     text-align: center;
-    top: 80px;
-    width: columnWidth(7);
+    top: 240px;
+    width: columnWidth(6);
   }
 
   .page--results__level {
@@ -44,22 +44,22 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    left: columnLeft(0);
+    left: columnLeft(6);
     position: absolute;
-    top: 400px;
-    width: columnWidth(12);
+    top: 480px;
+    width: columnWidth(6);
 
     .card-recap {
       animation: bouncein 0.5s linear 20s normal forwards;
-      border-radius: 8px;
+      border-radius: 4px;
       cursor: pointer;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
       opacity: 0;
       overflow: hidden;
       position: relative;
       transition: 0.25s ease transform;
       transform: scale3d(0, 0, 0);
-      width: calc(8.333333% - 8px);
+      width: calc(12.5% - 2px);
 
       @for $i from 1 through 32 {
         &:nth-child(#{$i}n) {
@@ -68,7 +68,7 @@
       }
 
       &.op--expanded {
-        transform: scale(2.5) !important;
+        transform: scale(4) !important;
         z-index: 902;
       }
 
@@ -109,31 +109,22 @@
         .card-recap__status__text {
           &.op--expired {
             color: $color-red;
-            font-size: 28px;
+            font-size: 20px;
           }
 
           &.op--solved {
             color: $color-green;
 
             .points {
-              font-size: 24px;
+              font-size: 18px;
             }
 
             .solver {
-              font-size: 16px;
-              white-space: no-wrap;
+              font-size: 10px;
             }
           }
         }
       }
     }
-  }
-
-  .page--results__buttons {
-    left: columnLeft(0);
-    position: absolute;
-    text-align: center;
-    top: 810px;
-    width: columnWidth(12);
   }
 }

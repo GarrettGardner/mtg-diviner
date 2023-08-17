@@ -94,6 +94,38 @@ $mainWidth: $appWidth - $mainGutter * 2;
       }
     }
 
+    .app__debugmode {
+      background: $color-white;
+      border-radius: 12px;
+      color: $color-black;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: 900;
+      margin: 0 0 0 -100px;
+      left: 50%;
+      line-height: 1.125;
+      opacity: 0;
+      padding: 3px 4px 2px;
+      position: absolute;
+      text-transform: uppercase;
+      transition:
+        0.25s ease opacity,
+        0.25s ease background,
+        0.25s ease color;
+      width: 200px;
+
+      &.op--on,
+      &:focus,
+      &:hover {
+        opacity: 1;
+      }
+
+      &.op--on {
+        background: $color-red;
+        color: $color-white;
+      }
+    }
+
     .app__version {
       color: $color-white;
       font-size: 26px;
