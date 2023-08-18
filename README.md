@@ -9,6 +9,7 @@ Garrett Gardner (hello@garrett-gardner.com)
 ## Version History
 
 - v1.0
+  - Remove cards from DB that haven't been released yet (v1.0.4)
   - Add MIT license (v1.0.3)
   - Add more debug tools (v1.0.3)
   - Revamp levelling system (v1.0.2)
