@@ -1,7 +1,7 @@
-const fse = require("fs-extra");
-const path = require("path");
-const { parser } = require("stream-json");
-const { streamArray } = require("stream-json/streamers/StreamArray");
+import fse from "fs-extra";
+import path from "path";
+import { parser } from "stream-json";
+import { streamArray } from "stream-json/streamers/StreamArray";
 const { dbpool } = require(path.join(__dirname, "../inc/constants"));
 
 interface Card {
@@ -120,6 +120,10 @@ const parseCard = (cardScryfall: any): Card | undefined => {
   const date = cardScryfall?.released_at;
   if (!date || date.length !== 10) {
     logAction(LOG_TYPE.ERROR, `Malformed card structure: Released At.`, JSON.stringify(cardScryfall));
+    return;
+  }
+  if (Date.parse(date) >= Date.now()) {
+    logAction(LOG_TYPE.SKIP, `Card is not released yet.`, JSON.stringify([cardScryfall.id, cardScryfall.name, date]));
     return;
   }
 
