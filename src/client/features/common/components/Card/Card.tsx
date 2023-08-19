@@ -31,7 +31,11 @@ export const Card = (props: ICardProps) => {
           <div className="card__hint__typeline__set">{set}</div>
         </div>
       </div>
-      {app.debugMode && <div className="card__name">{props.card.name}</div>}
+      {app.debugMode && (
+        <button className="card__name" onClick={() => props.onCheatGuess(props.card.name)}>
+          {props.card.name}
+        </button>
+      )}
       <div className="card__timer"></div>
       <div className="card__fullimage" style={{ backgroundImage: `url("${props.card.image_full}")` }}>
         <img src={props.card.image_full} />

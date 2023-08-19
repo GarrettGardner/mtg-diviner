@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@client/redux";
 import { APP_PAGE, APP_STATUS, appFacade } from "@client/features/app";
-import { Button, Leaderboard } from "@client/features/common";
-import { CARD_STATUS, GAME_STATUS, gameFacade } from "@client/features/game";
+import { Button, Leaderboard, LevelDetail, SelectorLevel } from "@client/features/common";
+import { CARD_STATUS, GAME_STATUS, ILevel, LEVEL_IDS, defaultLevel, gameFacade, initialLevelPool } from "@client/features/game";
 import { Page, messages } from "@client/features/page";
 import { soundStageFacade } from "@client/features/sound-stage";
 
@@ -10,8 +10,11 @@ export const PageResults = () => {
   const dispatch = useAppDispatch();
   const app = useAppSelector(appFacade.selector);
   const game = useAppSelector(gameFacade.selector);
-  const [message, setMessage] = useState("");
+
   const [expandedCard, setExpandedCard] = useState(-1);
+  const [levelPoolChoices, setLevelPoolChoices] = useState<ILevel[]>([]);
+  const [levelID, setLevelID] = useState(LEVEL_IDS.DEFAULT);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (game.status === GAME_STATUS.INACTIVE) {
@@ -21,6 +24,13 @@ export const PageResults = () => {
       setMessage(messages.loss[Math.floor(Math.random() * messages.loss.length)]);
       dispatch(soundStageFacade.action.PLAY_SOUND("round-lost"));
     }
+
+    let levelPool = game.levelPool
+      .filter((level) => (!level.minNumber || game.levelNumberNext >= level.minNumber) && (!level.maxNumber || game.levelNumberNext <= level.maxNumber))
+      .slice(0, 3);
+    levelPool = levelPool.length ? levelPool : [defaultLevel];
+    setLevelPoolChoices(levelPool);
+    setLevelID(levelPool?.[1].id || levelPool[0].id);
   }, []);
 
   const expandCard = (key: number) => {
@@ -33,7 +43,7 @@ export const PageResults = () => {
 
   const handleGameNextLevel = () => {
     if (app.status === APP_STATUS.ACTIVE) {
-      dispatch(appFacade.thunk.transitionOutPage(() => dispatch(gameFacade.thunk.levelInit())));
+      dispatch(appFacade.thunk.transitionOutPage(() => dispatch(gameFacade.thunk.levelInitialize(levelID))));
     }
   };
 
@@ -47,25 +57,32 @@ export const PageResults = () => {
     <Page classes="page--results">
       <div className="page--results__content">
         <p className="page--results__level page__item">
-          <span>Level {game.levels[game.levelActive].number}</span>
+          <span>Level {game.levelNumber}</span>
         </p>
+        <p className="page--results__difficulty page__item">{game.difficulty}</p>
         <h2 className="page__header page__item">
           {game.status === GAME_STATUS.INACTIVE && "Completed"}
           {game.status === GAME_STATUS.LOST && "Defeated"}
         </h2>
         {message && <p className="page__subheader page__item">{message}</p>}
-        <p>
-          {game.status === GAME_STATUS.INACTIVE && (
-            <Button classes="page__item" onClick={handleGameNextLevel}>
-              Next Level
-            </Button>
-          )}
-          {game.status === GAME_STATUS.LOST && (
-            <Button classes="page__item" onClick={handleGameRestart}>
-              Try again?
-            </Button>
-          )}
-        </p>
+        <div className="page--results__level-active page__item">
+          <LevelDetail classes={"op--large"} level={game.levelActive} />
+        </div>
+      </div>
+      <div className="page--results__bottom page__item">
+        {game.status === GAME_STATUS.INACTIVE && (
+          <>
+            <SelectorLevel labelText={`Next: Level ${game.levelNumberNext}`} levelID={levelID} levels={levelPoolChoices} onSelect={setLevelID} />
+            <p>
+              <Button onClick={handleGameNextLevel}>Next Level</Button>
+            </p>
+          </>
+        )}
+        {game.status === GAME_STATUS.LOST && (
+          <p>
+            <Button onClick={handleGameRestart}>Try again?</Button>
+          </p>
+        )}
       </div>
       <Leaderboard layout="large" players={game.leaderboard} />
       <div className="page--results__cards page__item">

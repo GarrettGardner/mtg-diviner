@@ -32,11 +32,35 @@ app.get("/cards", (req, res) => {
 
   if (query) {
     let number = 1;
-    const minDate = query.minDate;
-    if (minDate) {
-      SQLwhere.push(`date >= $${number}`);
-      SQLparams.push(minDate);
+
+    const inBooster = query.inBooster;
+    if (inBooster === "true") {
+      SQLwhere.push(`in_booster = true`);
+    } else if (inBooster === "false") {
+      SQLwhere.push(`in_booster = false`);
+    }
+
+    const isLatestExpansion = query.isLatestExpansion;
+    if (isLatestExpansion) {
+      SQLwhere.push(`(set = (SELECT set FROM card WHERE set_type = $${number} OR set_type = $${number + 1} ORDER BY date DESC LIMIT 1))`);
+      SQLparams.push("expansion");
+      SQLparams.push("core");
       number++;
+      number++;
+    }
+
+    const isLegend = query.isLegend;
+    if (isLegend === "true") {
+      SQLwhere.push(`(is_legend = true)`);
+    } else if (isLegend === "false") {
+      SQLwhere.push(`(is_legend = false)`);
+    }
+
+    const isPlaneswalker = query.isPlaneswalker;
+    if (isPlaneswalker === "true") {
+      SQLwhere.push(`(is_planeswalker = true)`);
+    } else if (isPlaneswalker === "false") {
+      SQLwhere.push(`(is_planeswalker = false)`);
     }
 
     const maxDate = query.maxDate;
@@ -46,17 +70,30 @@ app.get("/cards", (req, res) => {
       number++;
     }
 
+    const minDate = query.minDate;
+    if (minDate) {
+      SQLwhere.push(`date >= $${number}`);
+      SQLparams.push(minDate);
+      number++;
+    }
+
+    const set = query.set;
+    if (set) {
+      SQLwhere.push(`(set = $${number})`);
+      SQLparams.push(set);
+      number++;
+    }
+
     const setType = query.setType;
-    if (setType) {
-      switch (setType) {
-        case "core-expansion":
-          SQLwhere.push(`(set_type = $${number} OR set_type = $${number + 1}) AND booster = true`);
-          SQLparams.push(`core`);
-          SQLparams.push(`expansion`);
-          number++;
-          number++;
-          break;
-      }
+    if (
+      setType &&
+      ["alchemy", "core", "commander", "draft_innovation", "expansion", "funny", "masters", "masterpiece", "promo", "starter", "token"].findIndex(
+        (valid) => setType === valid,
+      ) >= 0
+    ) {
+      SQLwhere.push(`(set_type = $${number})`);
+      SQLparams.push(setType);
+      number++;
     }
   }
 

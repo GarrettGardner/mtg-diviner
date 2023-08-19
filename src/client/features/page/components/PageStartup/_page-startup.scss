@@ -5,76 +5,108 @@
     width: columnWidth(6);
   }
 
-  .page--startup__content {
-    font-size: 32px;
+  .page--startup__box {
+    background: $color-white;
+    border: 8px solid $color-purple;
+    border-radius: 48px;
     font-weight: 400;
-    left: columnLeft(1);
+    left: columnLeft(0);
     line-height: 1.5;
+    padding: 24px 32px;
     position: absolute;
     text-align: center;
-    top: 290px;
-    width: columnWidth(10);
-  }
+    top: 300px;
+    width: columnWidth(3);
 
-  .page--startup__rules {
-    display: flex;
-    margin-bottom: 48px;
+    &.op--right {
+      left: columnLeft(9);
+    }
 
-    li {
-      flex: 0 0 auto;
-      font-size: 32px;
-      line-height: 1.25;
-      list-style-type: none;
-      padding-left: 100px;
-      padding-right: 40px;
-      position: relative;
-      text-align: left;
-      width: 33.3333%;
+    .page--startup__box__header {
+      font-size: 36px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      line-height: 1.125;
+      margin-bottom: 16px;
+      text-shadow: 0 2px $color-purple;
+      text-transform: uppercase;
+    }
 
-      &::after {
-        align-items: center;
-        background: $color-purple;
-        border-radius: 50%;
-        box-shadow:
-          0 0 0 2px $color-black inset,
-          0 0 0 6px $color-white inset;
-        color: $color-white;
-        content: "1";
-        display: flex;
-        font-size: 36px;
-        font-weight: 900;
-        height: 80px;
-        justify-content: center;
-        left: 0;
-        position: absolute;
-        text-align: center;
-        top: 0;
-        width: 80px;
-      }
+    ul {
+      li {
+        font-size: 20px;
+        line-height: 1.125;
+        list-style-type: none;
+        margin-bottom: 24px;
+        padding-left: 56px;
+        position: relative;
+        text-align: left;
 
-      &:nth-child(2) {
         &::after {
-          content: "2";
+          align-items: center;
+          background: $color-purple;
+          border-radius: 50%;
+          border: 2px solid $color-black;
+          box-shadow: 0 0 0 2px $color-white inset;
+          color: $color-white;
+          content: "1";
+          display: flex;
+          font-size: 16px;
+          font-weight: 900;
+          height: 40px;
+          justify-content: center;
+          left: 0;
+          position: absolute;
+          text-align: center;
+          top: 0;
+          width: 40px;
         }
-      }
 
-      &:nth-child(3) {
-        &::after {
-          content: "3";
+        &:nth-child(2) {
+          &::after {
+            content: "2";
+          }
+        }
+
+        &:nth-child(3) {
+          &::after {
+            content: "3";
+          }
+        }
+
+        &:last-child {
+          margin-bottom: 0;
         }
       }
     }
   }
 
+  .page--startup__content {
+    font-weight: 400;
+    left: columnLeft(3);
+    position: absolute;
+    text-align: center;
+    top: 320px;
+    width: columnWidth(6);
+  }
+
   .page--startup__policy {
+    bottom: 32px;
     font-size: 16px;
     font-weight: 400;
-    left: columnLeft(0);
-    line-height: 1.25;
+    left: 32px;
+    line-height: 1.125;
     position: absolute;
     text-align: left;
-    top: 850px;
     width: columnWidth(4);
+  }
+
+  .page--startup__button {
+    left: columnLeft(3);
+    position: absolute;
+    text-align: center;
+    top: 800px;
+    width: columnWidth(6);
   }
 
   .page--startup__twitch-connection {

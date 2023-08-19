@@ -6,12 +6,14 @@ const { dbpool } = require(path.join(__dirname, "../inc/constants"));
 
 interface Card {
   id: string;
-  booster: boolean;
   color: string;
   cost: string;
   date: string;
   image_art: string;
   image_full: string;
+  in_booster: boolean;
+  is_legend: boolean;
+  is_planeswalker: boolean;
   name: string;
   rarity: string;
   set: string;
@@ -30,7 +32,7 @@ const PATH_OUTPUT_TXT = path.join(__dirname, "./files/output.txt");
 const PATH_SCRYFALL_JSON = path.join(__dirname, "./files/scryfall.json");
 const PATH_SCHEMA_SQL = path.join(__dirname, "./sql/schema.sql");
 
-const VALID_SET_TYPE = ["core", "expansion", "masters", "masterpiece", "draft_innovation", "commander", "starter"];
+const VALID_SET_TYPE = ["alchemy", "core", "commander", "draft_innovation", "expansion", "funny", "masters", "masterpiece", "promo", "starter", "token"];
 const SKIP_FRAME_EFFECTS = ["inverted", "showcase", "extendedart", "etched"];
 
 const logAction = (type: LOG_TYPE, text?: string, additional?: string) => {
@@ -38,6 +40,9 @@ const logAction = (type: LOG_TYPE, text?: string, additional?: string) => {
   fse.appendFile(PATH_OUTPUT_TXT, line).catch((e: Error) => {
     console.error(e.stack);
   });
+  if (type === LOG_TYPE.ERROR) {
+    console.error(line);
+  }
 };
 
 const parseCard = (cardScryfall: any): Card | undefined => {
@@ -73,17 +78,17 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     return;
   }
 
-  const cost = cardScryfall?.card_faces?.[0]?.mana_cost || cardScryfall?.mana_cost;
+  const cost = cardScryfall?.card_faces?.[0]?.mana_cost || cardScryfall?.mana_cost || "";
 
   const image_art = cardScryfall?.card_faces?.[0]?.image_uris?.art_crop || cardScryfall?.image_uris?.art_crop;
   if (!image_art) {
-    logAction(LOG_TYPE.ERROR, `Malformed card structure: Image Art.`, JSON.stringify(cardScryfall));
+    logAction(LOG_TYPE.SKIP, `Card has no available Image Art.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
     return;
   }
 
   const image_full = cardScryfall?.card_faces?.[0]?.image_uris?.large || cardScryfall?.image_uris?.large;
   if (!image_full) {
-    logAction(LOG_TYPE.ERROR, `Malformed card structure: Image Full.`, JSON.stringify(cardScryfall));
+    logAction(LOG_TYPE.SKIP, `Card has no available Image Full art.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
     return;
   }
 
@@ -99,10 +104,14 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     return;
   }
 
-  const set_type = cardScryfall?.set_type;
+  let set_type = cardScryfall?.set_type;
   if (!set_type) {
     logAction(LOG_TYPE.ERROR, `Malformed card structure: Set Type.`, JSON.stringify(cardScryfall));
     return;
+  }
+  if (set === "mat") {
+    // if the set is mat then override the set type
+    set_type = "masterpiece";
   }
 
   let type = cardScryfall?.card_faces?.[0]?.type_line || cardScryfall?.type_line;
@@ -137,12 +146,9 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     return;
   }
 
-  const booster = Boolean(cardScryfall?.booster);
-
-  if (cardScryfall?.promo !== undefined && cardScryfall.promo) {
-    logAction(LOG_TYPE.SKIP, `Card is a promo.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
-    return;
-  }
+  const in_booster = Boolean(cardScryfall?.booster);
+  const is_legend = Boolean(type?.indexOf("Legendary") !== -1);
+  const is_planeswalker = Boolean(type?.indexOf("Planeswalker") !== -1);
 
   if (cardScryfall?.full_art !== undefined && cardScryfall.full_art) {
     logAction(LOG_TYPE.SKIP, `Card is full_art.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
@@ -151,11 +157,6 @@ const parseCard = (cardScryfall: any): Card | undefined => {
 
   if (cardScryfall?.textless !== undefined && cardScryfall.textless) {
     logAction(LOG_TYPE.SKIP, `Card is textless.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
-    return;
-  }
-
-  if (cardScryfall?.digital !== undefined && cardScryfall.digital) {
-    logAction(LOG_TYPE.SKIP, `Card is digital.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
     return;
   }
 
@@ -178,12 +179,14 @@ const parseCard = (cardScryfall: any): Card | undefined => {
 
   return {
     id,
-    booster,
+    in_booster,
     color,
     cost,
     date,
     image_art,
     image_full,
+    is_legend,
+    is_planeswalker,
     name,
     rarity,
     set,
@@ -204,8 +207,25 @@ const processDB = async () => {
 
   let numberSkipped = 0;
   let numberInserted = 0;
-  const query =
-    "INSERT INTO card (id, booster, color, cost, date, image_art, image_full, name, rarity, set, set_type, type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id;";
+  const query = `
+    INSERT INTO card (
+      id,
+      color,
+      cost,
+      date,
+      image_art,
+      image_full,
+      in_booster,
+      is_legend,
+      is_planeswalker,
+      name,
+      rarity,
+      set,
+      set_type,
+      type
+    ) VALUES (
+      $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+    ) RETURNING id;`;
 
   let stream = fse.createReadStream(PATH_SCRYFALL_JSON);
   stream
@@ -222,12 +242,14 @@ const processDB = async () => {
     }
     const cardArray = [
       card.id,
-      card.booster,
       card.color,
       card.cost,
       card.date,
       card.image_art,
       card.image_full,
+      card.in_booster,
+      card.is_legend,
+      card.is_planeswalker,
       card.name,
       card.rarity,
       card.set,
@@ -236,8 +258,7 @@ const processDB = async () => {
     ];
     let hasError = false;
     await dbpool.query(query, cardArray).catch((e: Error) => {
-      logAction(LOG_TYPE.ERROR, `DB Insert error: ${e.stack}`);
-      console.error(e.stack);
+      logAction(LOG_TYPE.ERROR, `DB Insert error: ${e.stack}`, JSON.stringify([card.id, card.name]));
       hasError = true;
     });
     if (hasError) {

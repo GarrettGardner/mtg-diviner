@@ -26,7 +26,7 @@ export const App = () => {
   }, []);
 
   const handleDebugMode = () => {
-    if (app.debugMode || app.page === APP_PAGE.STARTUP) {
+    if (!app.debugMode) {
       dispatch(appFacade.action.UPDATE_DEBUG_MODE(!app.debugMode));
       window.debugMode = !app.debugMode;
     }
