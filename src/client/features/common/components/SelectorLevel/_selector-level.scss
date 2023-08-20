@@ -1,0 +1,31 @@
+.selector-level {
+  margin-bottom: 48px;
+
+  .selector-level__label {
+    font-size: 56px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    line-height: 1.125;
+    margin: 0 auto 32px;
+    text-shadow: 0 3px $color-purple;
+    text-transform: uppercase;
+  }
+
+  .selector-level__buttons {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+
+    .selector-level__button {
+      cursor: pointer;
+      margin: 0 $gutterWidth 0 0;
+      outline: none;
+      padding: 0;
+      width: columnWidth(2);
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}

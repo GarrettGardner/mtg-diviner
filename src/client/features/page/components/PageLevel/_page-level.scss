@@ -39,7 +39,6 @@ $waveDuration: 20s;
       background: $color-purple;
       height: $crystalWidth - 24px;
       left: 8px;
-      mix-blend-mode: multiply;
       opacity: 0.5;
       position: absolute;
       top: 24px;
@@ -232,7 +231,7 @@ $waveDuration: 20s;
 
     .crystal__level {
       color: $color-black;
-      font-size: 64px;
+      font-size: 16px;
       font-weight: 900;
       height: 100%;
       justify-content: center;
@@ -246,70 +245,46 @@ $waveDuration: 20s;
       width: 100%;
 
       .crystal__level__number {
-        font-size: 20px;
+        font-size: 18px;
         left: 0;
         letter-spacing: 8px;
         line-height: 1;
         position: absolute;
         text-shadow: none;
         text-transform: uppercase;
-        top: 54px;
+        top: 48px;
         width: 100%;
 
         span {
           background: rgba($color-black, 0.8);
-          border-radius: 40px;
+          border-radius: 32px;
           color: $color-white;
-          padding: 6px 24px 4px;
+          padding: 4px 20px 2px;
         }
       }
 
-      .crystal__level__labels {
-        align-items: center;
-        display: flex;
-        flex-direction: column;
-        height: 120px;
-        overflow: hidden;
+      .crystal__level__difficulty {
+        font-size: 18px;
+        font-weight: 900;
+        left: 0;
+        letter-spacing: 2px;
         position: absolute;
+        top: 76px;
+        text-align: center;
+        text-transform: uppercase;
+        width: 100%;
+      }
+
+      .crystal__level__active {
+        display: flex;
         justify-content: center;
         left: 0;
-        top: 88px;
+        position: absolute;
+        top: 120px;
         width: 100%;
 
-        .crystal__level__label {
-          background-color: $color-gray-light-ultra;
-          align-items: stretch;
-          border: 2px solid $color-black;
-          border-radius: 14px;
-          height: 28px;
-          display: flex;
-          margin: 4px 0;
-          overflow: hidden;
-          text-shadow: none;
-          white-space: nowrap;
-          width: auto;
-
-          .crystal__level__label__type {
-            align-items: center;
-            background-color: $color-gray-dark;
-            color: $color-white;
-            display: flex;
-            font-size: 14px;
-            font-weight: 900;
-            letter-spacing: 2px;
-            line-height: 1;
-            padding: 2px 8px 0 12px;
-            text-transform: uppercase;
-          }
-
-          .crystal__level__label__value {
-            align-items: center;
-            display: flex;
-            padding: 0 12px 0 8px;
-            font-size: 18px;
-            font-weight: 500;
-            line-height: 1;
-          }
+        .level-detail {
+          width: columnWidth(2);
         }
       }
 
@@ -319,7 +294,7 @@ $waveDuration: 20s;
         left: 50%;
         margin-left: -174px;
         position: absolute;
-        top: 228px;
+        top: 224px;
         width: 348px;
 
         .crystal__card {
@@ -429,5 +404,26 @@ $waveDuration: 20s;
     position: absolute;
     top: 820px;
     width: columnWidth(3);
+  }
+
+  .debug-tools {
+    position: absolute;
+    top: 968px;
+    right: 128px;
+    z-index: 902;
+
+    .button-debug {
+      background: $color-red;
+      border-radius: 12px;
+      color: $color-white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1.125;
+      margin-left: 8px;
+      padding: 3px 4px 2px;
+      text-transform: uppercase;
+      width: 120px;
+    }
   }
 }

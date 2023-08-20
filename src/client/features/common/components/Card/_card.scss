@@ -180,6 +180,7 @@ $cardDetailsTextMargin: 8px;
   .card__name {
     background: $color-white;
     border-radius: 16px;
+    cursor: pointer;
     font-size: 24px;
     font-weight: 900;
     line-height: 1.125;
