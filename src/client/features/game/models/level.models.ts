@@ -201,7 +201,7 @@ export const initialLevelPool: ILevel[] = [
   },
   {
     icon: "text-13-16",
-    id: LEVEL_IDS.EXPANSION_BOOSTER_09_12,
+    id: LEVEL_IDS.EXPANSION_BOOSTER_13_16,
     labelMain: "Boosters",
     labelSub: "2013-2016",
     minNumber: 3,
