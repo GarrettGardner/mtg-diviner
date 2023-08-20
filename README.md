@@ -9,6 +9,7 @@ Garrett Gardner (hello@garrett-gardner.com)
 ## Version History
 
 - v1.1
+  - Fix level bug (v1.1.1)
   - Redo the levelling system to something way cooler (v1.1.0)
 - v1.0
   - Remove cards from DB that haven't been released yet (v1.0.4)
