@@ -113,6 +113,7 @@ $mainWidth: $appWidth - $mainGutter * 2;
         0.25s ease background,
         0.25s ease color;
       width: 200px;
+      z-index: 902;
 
       &.op--on,
       &:focus,

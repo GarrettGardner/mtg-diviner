@@ -1,15 +1,12 @@
-import { ILevel } from "@client/features/game";
+import { ILevel, LEVEL_DIFFICULTY_KEY } from "@client/features/game";
 
 export const MAX_CARDS = 24;
 
 export enum GAME_POSITION {
+  NONE = "none",
   ONE = "one",
   TWO = "two",
   THREE = "three",
-}
-
-export enum POSITION_NONE {
-  NONE = "none",
 }
 
 export enum CARD_STATUS {
@@ -32,13 +29,18 @@ export enum CARD_COLOR {
 export interface ICard {
   color: CARD_COLOR;
   cost: string;
+  date: string;
   id: string;
   image_art: string;
   image_full: string;
+  in_booster: boolean;
+  is_legend: boolean;
+  is_planeswalker: boolean;
   name: string;
-  position: GAME_POSITION | POSITION_NONE;
+  position: GAME_POSITION;
   rarity: string;
   set: string;
+  set_type: string;
   solved?: number;
   solvers?: string[];
   status: CARD_STATUS;
@@ -75,8 +77,11 @@ export enum GAME_STATUS {
 export interface IGame {
   status: GAME_STATUS;
   cards: ICard[];
-  levels: ILevel[];
-  levelActive: number;
+  difficulty?: LEVEL_DIFFICULTY_KEY;
+  levelActive?: ILevel;
+  levelNumber: number;
+  levelNumberNext: number;
+  levelPool: ILevel[];
   pointsCurrent: number;
   leaderboard: ILeaderboardPlayer[];
   positions: {
@@ -90,8 +95,9 @@ export interface IGame {
 export const initialGame: IGame = {
   status: GAME_STATUS.INACTIVE,
   cards: [],
-  levels: [],
-  levelActive: 0,
+  levelNumber: 1,
+  levelNumberNext: 0,
+  levelPool: [],
   pointsCurrent: 0,
   leaderboard: [],
   positions: {

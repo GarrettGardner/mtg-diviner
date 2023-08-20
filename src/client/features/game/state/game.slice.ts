@@ -1,22 +1,22 @@
 import axios, { AxiosError } from "axios";
 import { createSlice } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from "@client/redux";
-import { PUBLIC_URL, debugMessage, fuzzyCompare } from "@client/utils";
+import { PUBLIC_URL, debugMessage, deepCopy, guessCardName } from "@client/utils";
 import { appFacade, APP_PAGE } from "@client/features/app";
 import {
+  CARD_STATUS,
   COUNTDOWN_ACTION_TYPE,
+  GAME_POSITION,
   GAME_STATUS,
   initialGame,
+  initialLevelPool,
   ICard,
+  IGame,
   ILeaderboardPlayer,
-  GAME_POSITION,
-  CARD_STATUS,
-  initialLevels,
-  levelEraOptions,
-  POSITION_NONE,
   MAX_CARDS,
-  LEVEL_MODIFIER_KEYS,
-  generateLevel,
+  levelModifierDifficulty,
+  LEVEL_DIFFICULTY_KEY,
+  defaultLevel,
 } from "@client/features/game";
 import { soundStageFacade } from "@client/features/sound-stage";
 
@@ -25,59 +25,75 @@ const gameSlice = createSlice({
   name: "GAME",
   initialState: initialGame,
   reducers: {
-    START: (state, action) => {
-      const game = { ...initialGame };
-      game.levels = action.payload;
-      return { ...game };
-    },
-    UPDATE_STATUS: (state, action) => {
-      state.status = action.payload;
-    },
-    UPDATE_POINTS: (state, action) => {
-      state.pointsCurrent = action.payload;
-    },
-    UPDATE_LEVELS: (state, action) => {
-      state.levels = [...action.payload.map((a: any) => ({ ...a }))];
-    },
-    UPDATE_LEVEL_ACTIVE: (state, action) => {
-      state.levelActive = action.payload;
-    },
-    UPDATE_CARDS: (state, action) => {
-      state.cards = [...action.payload];
-    },
-    UPDATE_LEADERBOARD: (state, action) => {
-      state.leaderboard = [...action.payload];
-    },
-    UPDATE_POSITIONS: (state, action) => {
-      state.positions = { ...action.payload };
-    },
-    UPDATE_COUNTDOWN_ACTIONS: (state, action) => {
-      state.countdownActions = [...action.payload];
-    },
-    PAUSE: (state, action) => {
-      state.countdownActions = action.payload;
-      state.status = GAME_STATUS.PAUSED;
-    },
-    RESUME: (state, action) => {
-      state.countdownActions = action.payload;
-      state.status = GAME_STATUS.ACTIVE;
-    },
     CLEAN_COUNTDOWN_ACTIONS: (state) => {
       const currentTime = new Date().getTime();
       state.countdownActions = state.countdownActions.filter((countdownAction) => countdownAction.startTime + countdownAction.duration > currentTime);
+    },
+    LEVEL_INITIALIZE: (
+      state,
+      action: {
+        payload: { levelActive: IGame["levelActive"]; levelNumber: IGame["levelNumber"]; pointsCurrent: IGame["pointsCurrent"] };
+      },
+    ) => {
+      state.levelActive = action.payload.levelActive;
+      state.levelNumber = action.payload.levelNumber;
+      state.pointsCurrent = action.payload.pointsCurrent;
+    },
+    LEVEL_LOADED: (state, action: { payload: { cards: IGame["cards"] } }) => {
+      state.cards = action.payload.cards;
+      state.status = GAME_STATUS.ACTIVE;
+    },
+    LEVEL_END: (
+      state,
+      action: { payload: { cards: IGame["cards"]; levelPool: IGame["levelPool"]; levelNumberNext: IGame["levelNumberNext"]; status: IGame["status"] } },
+    ) => {
+      state.cards = action.payload.cards;
+      state.levelPool = action.payload.levelPool;
+      state.levelNumberNext = action.payload.levelNumberNext;
+      state.status = action.payload.status;
+    },
+    PAUSE: (state, action: { payload: { countdownActions: IGame["countdownActions"] } }) => {
+      state.countdownActions = action.payload.countdownActions;
+      state.status = GAME_STATUS.PAUSED;
+    },
+    PROCESS_GUESS: (state, action: { payload: { cards: IGame["cards"]; leaderboard: IGame["leaderboard"]; pointsCurrent: IGame["pointsCurrent"] } }) => {
+      state.cards = action.payload.cards;
+      state.leaderboard = action.payload.leaderboard;
+      state.pointsCurrent = action.payload.pointsCurrent;
+    },
+    RESUME: (state, action: { payload: { countdownActions: IGame["countdownActions"] } }) => {
+      state.countdownActions = action.payload.countdownActions;
+      state.status = GAME_STATUS.ACTIVE;
+    },
+    START: (state, action: { payload: { difficulty: IGame["difficulty"]; levelActive: IGame["levelActive"]; levelPool: IGame["levelPool"] } }) => {
+      return {
+        ...initialGame,
+        difficulty: action.payload.difficulty,
+        levelActive: action.payload.levelActive,
+        levelPool: action.payload.levelPool,
+      };
+    },
+    UPDATE_CARDS: (state, action: { payload: { cards: IGame["cards"] } }) => {
+      state.cards = action.payload.cards;
+    },
+    UPDATE_POSITIONS: (state, action: { payload: { positions: IGame["positions"] } }) => {
+      state.positions = action.payload.positions;
+    },
+    UPDATE_COUNTDOWN_ACTIONS: (state, action: { payload: { countdownActions: IGame["countdownActions"] } }) => {
+      state.countdownActions = action.payload.countdownActions;
     },
   },
 });
 
 const gameThunks = {
-  // Adds an action with an argument after a given timeout countdown duration
+  /* Adds an action with an argument after a given timeout countdown duration */
   countdownActionAdd:
     (countdownActionType: COUNTDOWN_ACTION_TYPE, duration: number, countdownActionArgument?: GAME_POSITION | ICard["id"]): AppThunk =>
     (dispatch, getState) => {
       debugMessage(`countdownActionAdd(${countdownActionType}, ${duration}, ${countdownActionArgument})`);
 
       const game = gameFacade.selector(getState());
-      let countdownActions = game.countdownActions.map((a) => ({ ...a }));
+      let countdownActions = deepCopy(game.countdownActions);
 
       const countdown = {
         startTime: new Date().getTime(),
@@ -91,10 +107,10 @@ const gameThunks = {
       countdownActions.push(countdown);
 
       // Save the new countdown
-      dispatch(gameFacade.action.UPDATE_COUNTDOWN_ACTIONS(countdownActions));
+      dispatch(gameFacade.action.UPDATE_COUNTDOWN_ACTIONS({ countdownActions }));
     },
 
-  // Fire a countdown action timeout, then clears from state
+  /* Fire a countdown action timeout, then clears from state */
   countdownActionFire:
     (countdownAction: COUNTDOWN_ACTION_TYPE, args?: GAME_POSITION | ICard["id"]): AppThunk =>
     (dispatch, getState) => {
@@ -102,12 +118,10 @@ const gameThunks = {
 
       switch (countdownAction) {
         case COUNTDOWN_ACTION_TYPE.CARD_ACTIVATE:
-          // TODO: Pass correctly typed arguments
-          //@ts-ignore
-          dispatch(gameFacade.thunk.cardActivate(args));
+          dispatch(gameFacade.thunk.cardActivate(args as GAME_POSITION));
           break;
         case COUNTDOWN_ACTION_TYPE.CARD_EXPIRE:
-          dispatch(gameFacade.thunk.cardExpire(args));
+          dispatch(gameFacade.thunk.cardExpire(args as ICard["id"]));
           break;
         case COUNTDOWN_ACTION_TYPE.LEVEL_END:
           dispatch(gameFacade.thunk.levelEnd());
@@ -115,6 +129,19 @@ const gameThunks = {
       }
       dispatch(gameFacade.action.CLEAN_COUNTDOWN_ACTIONS());
     },
+
+  /* Fire a countdown action timeout, then clears from state */
+  countdownActionClear: (): AppThunk => (dispatch, getState) => {
+    debugMessage(`countdownActionClear()`);
+
+    const game = gameFacade.selector(getState());
+
+    game.countdownActions.forEach((countdownAction) => {
+      window.clearTimeout(countdownAction.timeout);
+    });
+
+    dispatch(gameFacade.action.UPDATE_COUNTDOWN_ACTIONS({ countdownActions: [] }));
+  },
 
   /* Pauses game and updates all saved countdown actions */
   gamePause: (): AppThunk => (dispatch, getState) => {
@@ -139,7 +166,7 @@ const gameThunks = {
       };
     });
 
-    dispatch(gameFacade.action.PAUSE(countdownActions));
+    dispatch(gameFacade.action.PAUSE({ countdownActions }));
   },
 
   /* Resumes game from paused state */
@@ -147,7 +174,7 @@ const gameThunks = {
     debugMessage(`gameResume()`);
 
     const game = gameFacade.selector(getState());
-    let countdownActions = game.countdownActions.map((a) => ({ ...a }));
+    let countdownActions = deepCopy(game.countdownActions);
 
     const newStartTime = new Date().getTime();
     countdownActions = countdownActions.map((countdownAction) => ({
@@ -161,66 +188,62 @@ const gameThunks = {
     }));
 
     // Save the new countdowns
-    dispatch(gameFacade.action.RESUME(countdownActions));
+    dispatch(gameFacade.action.RESUME({ countdownActions }));
   },
 
   /* Start the game from initial state */
   gameStart:
-    (startEra: keyof typeof levelEraOptions): AppThunk =>
+    (difficulty: LEVEL_DIFFICULTY_KEY, levelID: string): AppThunk =>
     (dispatch, getState) => {
-      debugMessage(`gameStart(${startEra})`);
+      debugMessage(`gameStart(${difficulty}, ${levelID})`);
 
-      const levels = initialLevels.map((level) => (level.number < 7 ? generateLevel([startEra], { ...level }) : { ...level }));
+      const levelPool = deepCopy(initialLevelPool).map((level) => ({
+        ...level,
+        ...levelModifierDifficulty[difficulty],
+      }));
 
-      dispatch(gameFacade.action.START(levels));
+      const levelActive = levelPool.find((level) => level.id === levelID) || defaultLevel;
+
+      dispatch(gameFacade.action.START({ difficulty, levelActive, levelPool }));
       dispatch(appFacade.thunk.transitionOutPage(() => dispatch(gameFacade.thunk.levelLoad())));
     },
 
   /* Initialize the next level based on the last level performance and start it */
-  levelInit: (): AppThunk => (dispatch, getState) => {
-    debugMessage(`levelInit()`);
+  levelInitialize:
+    (levelID: string): AppThunk =>
+    (dispatch, getState) => {
+      debugMessage(`levelInitialize(${levelID})`);
 
-    const game = gameFacade.selector(getState());
+      const game = gameFacade.selector(getState());
 
-    let advance = 1;
-    if (game.pointsCurrent >= game.levels[game.levelActive].pointsSkip) {
-      advance++;
-    }
+      const levelNumber = game.levelNumberNext;
+      const levelActive = game.levelPool.find((level) => level.id === levelID) || defaultLevel;
 
-    let levels = game.levels.map((a) => ({ ...a }));
-    let nextLevel = 0;
-    for (let i = 1; i <= advance; i++) {
-      nextLevel = levels.findIndex((level) => level.number === levels[game.levelActive].number + i);
-      if (nextLevel < 0) {
-        levels.push({
-          ...levels[game.levelActive],
-          number: levels[game.levelActive].number + i,
-          pointsPass: Math.min(levels[game.levelActive].pointsPass + i, MAX_CARDS),
-        });
-        nextLevel = levels.length - 1;
-      }
-    }
+      dispatch(
+        gameFacade.action.LEVEL_INITIALIZE({
+          levelActive,
+          levelNumber,
+          pointsCurrent: 0,
+        }),
+      );
 
-    dispatch(gameFacade.action.UPDATE_LEVELS(levels));
-    dispatch(gameFacade.action.UPDATE_LEVEL_ACTIVE(nextLevel));
-    dispatch(gameFacade.action.UPDATE_POINTS(0));
-
-    dispatch(gameFacade.thunk.levelLoad());
-  },
+      dispatch(gameFacade.thunk.levelLoad());
+    },
 
   /* Load the next level */
   levelLoad: (): AppThunk => async (dispatch, getState) => {
     debugMessage(`levelLoad()`);
 
     const game = gameFacade.selector(getState());
+
     const url = new URL("/cards", PUBLIC_URL);
-    Object.entries(game.levels[game.levelActive].params).forEach((param) => {
+    Object.entries(game.levelActive.params).forEach((param) => {
       if (param[0] && param[1]) {
         url.searchParams.set(param[0], param[1]);
       }
     });
 
-    let apiError: AxiosError | undefined;
+    let apiError: AxiosError | boolean = false;
     const response = await axios.get(url.toString()).catch((error: AxiosError) => {
       apiError = error;
     });
@@ -235,7 +258,7 @@ const gameThunks = {
         (card: ICard) =>
           ({
             ...card,
-            position: POSITION_NONE.NONE,
+            position: GAME_POSITION.NONE,
             status: CARD_STATUS.PENDING,
           }) as ICard,
       )
@@ -247,8 +270,7 @@ const gameThunks = {
     }
 
     // Save the new level information
-    dispatch(gameFacade.action.UPDATE_STATUS(GAME_STATUS.ACTIVE));
-    dispatch(gameFacade.action.UPDATE_CARDS(cards));
+    dispatch(gameFacade.action.LEVEL_LOADED({ cards }));
 
     // Start the next level
     dispatch(appFacade.thunk.transitionInPage(APP_PAGE.GAME_ROUND, () => dispatch(gameFacade.thunk.levelStart())));
@@ -275,33 +297,40 @@ const gameThunks = {
         return;
       }
 
-      const cards = game.cards
-        .map((a) => ({ ...a }))
-        .map((card) => ({
-          ...card,
-          status: card.status === CARD_STATUS.ACTIVE || card.status === CARD_STATUS.PENDING ? CARD_STATUS.EXPIRED : card.status,
-        }));
+      const cards = deepCopy(game.cards).map((card) => ({
+        ...card,
+        status: card.status === CARD_STATUS.ACTIVE || card.status === CARD_STATUS.PENDING ? CARD_STATUS.EXPIRED : card.status,
+      }));
 
-      // Check if they actually won the round, or skip
-      const gameStatus = override || game.pointsCurrent >= game.levels[game.levelActive].pointsPass ? GAME_STATUS.INACTIVE : GAME_STATUS.LOST;
+      // Check if they actually won the round, or skip was used to override
+      const status = override || game.pointsCurrent >= game.levelActive.pointsPass ? GAME_STATUS.INACTIVE : GAME_STATUS.LOST;
 
-      dispatch(gameFacade.action.UPDATE_STATUS(gameStatus));
-      dispatch(gameFacade.action.UPDATE_CARDS(cards));
+      let levelNumberNext = 0;
+      if (status === GAME_STATUS.INACTIVE) {
+        levelNumberNext = game.levelNumber + 1;
+        if (game.pointsCurrent >= game.levelActive.pointsSkip) {
+          levelNumberNext++;
+        }
+      }
 
-      dispatch(gameFacade.action.CLEAN_COUNTDOWN_ACTIONS);
+      const levelPool = deepCopy(game.levelPool)
+        .filter((level) => !level.maxNumber || !(level.id === game.levelActive.id || levelNumberNext > level.maxNumber))
+        .sort(() => 0.5 - Math.random());
 
+      dispatch(gameFacade.action.LEVEL_END({ cards, levelPool, levelNumberNext, status }));
+      dispatch(gameFacade.thunk.countdownActionClear());
       dispatch(appFacade.thunk.transitionPage(APP_PAGE.RESULTS));
     },
 
   /* Activate a card in a given position */
   cardActivate:
-    (position: GAME_POSITION | POSITION_NONE): AppThunk =>
+    (position: GAME_POSITION): AppThunk =>
     (dispatch, getState) => {
       debugMessage(`cardActivate(${position})`);
 
       const game = gameFacade.selector(getState());
 
-      let cards = game.cards.map((a) => ({ ...a }));
+      let cards = deepCopy(game.cards);
 
       // Find the next waiting card
       const cardIndex = cards.findIndex((card) => card.status === CARD_STATUS.PENDING);
@@ -310,17 +339,17 @@ const gameThunks = {
       if (cardIndex < 0) {
         let positions = { ...game.positions };
 
-        if (position === POSITION_NONE.NONE) {
+        if (position === GAME_POSITION.NONE) {
           position = GAME_POSITION.ONE;
         }
         positions[position] = true;
-        dispatch(gameFacade.action.UPDATE_POSITIONS(positions));
+        dispatch(gameFacade.action.UPDATE_POSITIONS({ positions }));
 
         const newPositions = gameFacade.selector(getState()).positions;
 
         // If there are no other active cards either, level is over
         if (newPositions.one && newPositions.two && newPositions.three && cards.filter((card) => card.status === CARD_STATUS.ACTIVE).length < 1) {
-          dispatch(gameFacade.thunk.countdownActionAdd(COUNTDOWN_ACTION_TYPE.LEVEL_END, 1000));
+          dispatch(gameFacade.thunk.countdownActionAdd(COUNTDOWN_ACTION_TYPE.LEVEL_END, 500));
         }
         return;
       }
@@ -336,7 +365,7 @@ const gameThunks = {
       // Play new card sound
       dispatch(soundStageFacade.action.PLAY_SOUND("card-new"));
 
-      dispatch(gameFacade.action.UPDATE_CARDS(cards));
+      dispatch(gameFacade.action.UPDATE_CARDS({ cards }));
     },
 
   /* Card expires and times out, gets replace by new card */
@@ -347,7 +376,7 @@ const gameThunks = {
 
       const game = gameFacade.selector(getState());
 
-      let cards = game.cards.map((a) => ({ ...a }));
+      let cards = deepCopy(game.cards);
 
       const cardIndex = cards.findIndex((card) => card.id === id);
 
@@ -367,7 +396,7 @@ const gameThunks = {
       dispatch(soundStageFacade.action.PLAY_SOUND("card-missed"));
 
       // Save new cards in state
-      dispatch(gameFacade.action.UPDATE_CARDS(cards));
+      dispatch(gameFacade.action.UPDATE_CARDS({ cards }));
 
       // Free the position in 1s
       const position = cards[cardIndex].position;
@@ -390,8 +419,8 @@ const gameThunks = {
         return;
       }
 
-      let cards = game.cards.map((a) => ({ ...a })),
-        leaderboard = game.leaderboard.map((a) => ({ ...a })),
+      let cards = deepCopy(game.cards),
+        leaderboard = deepCopy(game.leaderboard),
         pointsCurrent = game.pointsCurrent;
 
       // Simplify input username
@@ -410,27 +439,15 @@ const gameThunks = {
       let guessCorrect = false;
       let cardIndex = -1;
 
-      // For each active card
+      // For each active card, check the guess
       cardsActive.every((card) => {
-        // If the guess is incorrect, return
-        const guessScore = fuzzyCompare(guess, card.name);
-        if (guessScore < 0.9) {
-          // Additional guess check for legendary creatures
-          const legendBeforeCommaIndex = card.name.indexOf(",");
-          if (legendBeforeCommaIndex < 2) {
-            return true;
-          }
-          const guessLegendScore = fuzzyCompare(guess, card.name.substring(0, legendBeforeCommaIndex));
-          if (guessLegendScore < 0.9) {
-            return true;
-          }
+        if (!guessCardName(guess, card.name, card.is_legend)) {
+          return true;
         }
-
-        // Then guess must be correct
-        guessCorrect = true;
 
         // Set card to solved
         cardIndex = cards.findIndex((cardOld) => cardOld.id === card.id);
+        guessCorrect = true;
 
         return false;
       });
@@ -477,9 +494,13 @@ const gameThunks = {
       // Sort leaderboard by top points and first to get a point
       leaderboard.sort((a, b) => (a.points > b.points || (a.points === b.points && a.added < b.added) ? -1 : 1));
 
-      dispatch(gameFacade.action.UPDATE_CARDS(cards));
-      dispatch(gameFacade.action.UPDATE_LEADERBOARD(leaderboard));
-      dispatch(gameFacade.action.UPDATE_POINTS(pointsCurrent));
+      dispatch(
+        gameFacade.action.PROCESS_GUESS({
+          cards,
+          leaderboard,
+          pointsCurrent,
+        }),
+      );
 
       if (!gracePeriod) {
         // Add sound effect "card-solved"

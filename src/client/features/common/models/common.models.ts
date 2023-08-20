@@ -8,6 +8,7 @@ export interface IButtonProps {
 
 export interface ICardProps {
   card: ICard;
+  onCheatGuess: (guess: string) => void;
 }
 
 export interface IIconButtonProps extends IButtonProps {}

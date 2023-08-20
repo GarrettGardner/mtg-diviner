@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, GuessInput, IconButton, Leaderboard } from "@client/features/common";
+import { Card, GuessInput, IconButton, Leaderboard, LevelDetail } from "@client/features/common";
 import { ICard, gameFacade } from "@client/features/game";
 import { Page } from "@client/features/page";
 import { TwitchConnectionCard } from "@client/features/twitch-connection";
@@ -11,10 +11,10 @@ export const PageLevel = () => {
   const game = useAppSelector(gameFacade.selector);
   const dispatch = useAppDispatch();
 
-  const crystalFillOffset = 100 - Math.min(Math.floor((game.pointsCurrent / game.levels[game.levelActive].pointsPass) * 100), 100);
+  const crystalFillOffset = 100 - Math.min(Math.floor((game.pointsCurrent / game.levelActive.pointsPass) * 100), 100);
 
-  const additionalPoints = game.pointsCurrent - game.levels[game.levelActive].pointsPass;
-  const pointsDifference = game.levels[game.levelActive].pointsSkip - game.levels[game.levelActive].pointsPass;
+  const additionalPoints = game.pointsCurrent - game.levelActive.pointsPass;
+  const pointsDifference = game.levelActive.pointsSkip - game.levelActive.pointsPass;
 
   const crystalFillOffset2 = additionalPoints <= 0 ? 100 : 100 - Math.min(Math.floor((additionalPoints / pointsDifference) * 100), 100);
 
@@ -22,8 +22,22 @@ export const PageLevel = () => {
     dispatch(gameFacade.thunk.gamePause());
   };
 
-  const handleSkip = () => {
-    dispatch(gameFacade.thunk.levelEnd(true));
+  const handleCheatEnd = () => {
+    if (app.debugMode) {
+      dispatch(gameFacade.thunk.levelEnd());
+    }
+  };
+
+  const handleCheatSkip = () => {
+    if (app.debugMode) {
+      dispatch(gameFacade.thunk.levelEnd(true));
+    }
+  };
+
+  const handleCheatGuess = (guess: string) => {
+    if (app.debugMode) {
+      dispatch(gameFacade.thunk.guessProcess("Cheater", guess));
+    }
   };
 
   return (
@@ -33,7 +47,7 @@ export const PageLevel = () => {
         <div className="cardbg op--position-two page__item"></div>
         <div className="cardbg op--position-three page__item"></div>
         {game.cards.map((card: ICard) => (
-          <Card key={card.id} card={card} />
+          <Card key={card.id} card={card} onCheatGuess={handleCheatGuess} />
         ))}
       </div>
       <div className="crystal page__item">
@@ -65,34 +79,25 @@ export const PageLevel = () => {
               </clipPath>
             </defs>
           </svg>
-          <div className="crystal__level">
-            <div className="crystal__level__number">
-              <span>Level {game.levels[game.levelActive].number}</span>
+        </div>
+        <div className="crystal__level">
+          <div className="crystal__level__number">
+            <span>Level {game.levelNumber}</span>
+          </div>
+          <div className="crystal__level__difficulty">{game.difficulty}</div>
+          <div className="crystal__level__active">
+            <LevelDetail level={game.levelActive} />
+          </div>
+          <div className="crystal__cards">
+            {game.cards.map((card, key) => (
+              <div key={key} className={`crystal__card op--${card.status} op--position-${card.position}`}></div>
+            ))}
+          </div>
+          <div className="crystal__level__points">
+            <div className="crystal__level__point__total">
+              {game.pointsCurrent}/{game.pointsCurrent < game.levelActive.pointsPass ? game.levelActive.pointsPass : game.levelActive.pointsSkip}
             </div>
-            <div className="crystal__level__labels">
-              {Object.entries(game.levels[game.levelActive].labels).map(([type, label], key) => (
-                <div key={key} className="crystal__level__label">
-                  <div className="crystal__level__label__type">{type}</div>
-                  <div className="crystal__level__label__value">{label}</div>
-                </div>
-              ))}
-            </div>
-            <div className="crystal__cards">
-              {game.cards.map((card, key) => (
-                <div key={key} className={`crystal__card op--${card.status} op--position-${card.position}`}></div>
-              ))}
-            </div>
-            <div className="crystal__level__points">
-              <div className="crystal__level__point__total">
-                {game.pointsCurrent}/
-                {game.pointsCurrent < game.levels[game.levelActive].pointsPass
-                  ? game.levels[game.levelActive].pointsPass
-                  : game.levels[game.levelActive].pointsSkip}
-              </div>
-              <div className="crystal__level__point__label">
-                {game.pointsCurrent < game.levels[game.levelActive].pointsPass ? "Points To Pass" : "Points To Skip"}
-              </div>
-            </div>
+            <div className="crystal__level__point__label">{game.pointsCurrent < game.levelActive.pointsPass ? "Points To Pass" : "Points To Skip"}</div>
           </div>
         </div>
       </div>
@@ -103,9 +108,14 @@ export const PageLevel = () => {
         Pause
       </IconButton>
       {app.debugMode && (
-        <IconButton classes="icon-button--skip page__item" onClick={handleSkip}>
-          Skip
-        </IconButton>
+        <div className="debug-tools page__item">
+          <button className="button-debug" onClick={handleCheatEnd}>
+            End Level
+          </button>
+          <button className="button-debug" onClick={handleCheatSkip}>
+            Skip Level
+          </button>
+        </div>
       )}
     </Page>
   );
