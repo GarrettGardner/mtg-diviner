@@ -12,7 +12,7 @@ export const PageResults = () => {
   const game = useAppSelector(gameFacade.selector);
 
   const [expandedCard, setExpandedCard] = useState(-1);
-  const [levelPoolChoices, setLevelPoolChoices] = useState<ILevel[]>([]);
+  const [levelPoolChoices, setLevelPoolChoices] = useState<ILevel[]>([defaultLevel]);
   const [levelID, setLevelID] = useState(LEVEL_IDS.DEFAULT);
   const [message, setMessage] = useState("");
 
@@ -20,17 +20,17 @@ export const PageResults = () => {
     if (game.status === GAME_STATUS.INACTIVE) {
       setMessage(messages.win[Math.floor(Math.random() * messages.win.length)]);
       dispatch(soundStageFacade.action.PLAY_SOUND("round-won"));
+
+      let levelPool = game.levelPool
+        .filter((level) => (!level.minNumber || game.levelNumberNext >= level.minNumber) && (!level.maxNumber || game.levelNumberNext <= level.maxNumber))
+        .slice(0, 3);
+      levelPool = levelPool.length ? levelPool : [defaultLevel];
+      setLevelPoolChoices(levelPool);
+      setLevelID(levelPool?.[1].id || levelPool?.[0].id || defaultLevel.id);
     } else if (game.status === GAME_STATUS.LOST) {
       setMessage(messages.loss[Math.floor(Math.random() * messages.loss.length)]);
       dispatch(soundStageFacade.action.PLAY_SOUND("round-lost"));
     }
-
-    let levelPool = game.levelPool
-      .filter((level) => (!level.minNumber || game.levelNumberNext >= level.minNumber) && (!level.maxNumber || game.levelNumberNext <= level.maxNumber))
-      .slice(0, 3);
-    levelPool = levelPool.length ? levelPool : [defaultLevel];
-    setLevelPoolChoices(levelPool);
-    setLevelID(levelPool?.[1].id || levelPool[0].id);
   }, []);
 
   const expandCard = (key: number) => {
