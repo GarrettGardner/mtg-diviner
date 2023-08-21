@@ -103,6 +103,7 @@ export const initialLevelPool: ILevel[] = [
     labelSub: "Expansion",
     maxNumber: 3,
     params: {
+      [LEVEL_PARAM_KEYS.IN_BOOSTER]: "true",
       [LEVEL_PARAM_KEYS.IS_LATEST_EXPANSION]: "true",
       [LEVEL_PARAM_KEYS.SET_TYPE]: "expansion",
     },
