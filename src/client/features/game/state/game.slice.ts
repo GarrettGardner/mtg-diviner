@@ -25,6 +25,9 @@ const gameSlice = createSlice({
   name: "GAME",
   initialState: initialGame,
   reducers: {
+    AUTOPLAY_TOGGLE: (state, action: { payload: { isAutoplay: IGame["isAutoplay"] } }) => {
+      state.isAutoplay = action.payload.isAutoplay;
+    },
     CLEAN_COUNTDOWN_ACTIONS: (state) => {
       const currentTime = new Date().getTime();
       state.countdownActions = state.countdownActions.filter((countdownAction) => countdownAction.startTime + countdownAction.duration > currentTime);
@@ -69,6 +72,7 @@ const gameSlice = createSlice({
       return {
         ...initialGame,
         difficulty: action.payload.difficulty,
+        isAutoplay: state.isAutoplay,
         levelActive: action.payload.levelActive,
         levelPool: action.payload.levelPool,
       };

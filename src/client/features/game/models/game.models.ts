@@ -75,35 +75,37 @@ export enum GAME_STATUS {
 }
 
 export interface IGame {
-  status: GAME_STATUS;
+  countdownActions: ICountdownAction[];
   cards: ICard[];
   difficulty?: LEVEL_DIFFICULTY_KEY;
+  isAutoplay: boolean;
+  leaderboard: ILeaderboardPlayer[];
   levelActive?: ILevel;
   levelNumber: number;
   levelNumberNext: number;
   levelPool: ILevel[];
   pointsCurrent: number;
-  leaderboard: ILeaderboardPlayer[];
   positions: {
     [GAME_POSITION.ONE]: boolean;
     [GAME_POSITION.TWO]: boolean;
     [GAME_POSITION.THREE]: boolean;
   };
-  countdownActions: ICountdownAction[];
+  status: GAME_STATUS;
 }
 
 export const initialGame: IGame = {
-  status: GAME_STATUS.INACTIVE,
+  countdownActions: [],
   cards: [],
+  isAutoplay: false,
+  leaderboard: [],
   levelNumber: 1,
   levelNumberNext: 0,
   levelPool: [],
   pointsCurrent: 0,
-  leaderboard: [],
   positions: {
     [GAME_POSITION.ONE]: false,
     [GAME_POSITION.TWO]: false,
     [GAME_POSITION.THREE]: false,
   },
-  countdownActions: [],
+  status: GAME_STATUS.INACTIVE,
 };

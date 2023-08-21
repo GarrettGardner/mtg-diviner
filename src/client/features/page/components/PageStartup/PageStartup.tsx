@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTimeout } from "@client/hooks";
 import { useAppDispatch, useAppSelector } from "@client/redux";
 import { APP_STATUS, appFacade } from "@client/features/app";
 import { Button, SelectorDifficulty, SelectorLevel } from "@client/features/common";
@@ -8,6 +9,7 @@ import { TwitchConnectionCard, TwitchConnectionConnect, twitchConnectionFacade }
 
 export const PageStartup = () => {
   const app = useAppSelector(appFacade.selector);
+  const game = useAppSelector(gameFacade.selector);
   const dispatch = useAppDispatch();
   const twitchConnection = useAppSelector(twitchConnectionFacade.selector);
 
@@ -20,11 +22,13 @@ export const PageStartup = () => {
     }
   };
 
-  const levels = [...initialLevelPool].filter((level) => level.isStarter) || [{ ...defaultLevel }];
+  const levels = [...initialLevelPool].filter((level) => level.isStarter) || [defaultLevel];
 
   useEffect(() => {
-    setLevelID(levels?.[1].id || levels[0].id);
+    setLevelID(levels?.[1].id || levels?.[0].id || defaultLevel.id);
   }, []);
+
+  useTimeout(() => handleGameStart(), 5000, game.isAutoplay);
 
   return (
     <Page classes="page--startup">
@@ -43,7 +47,9 @@ export const PageStartup = () => {
         <SelectorLevel labelText={"Start level"} levelID={levelID} levels={levels} onSelect={setLevelID} />
       </div>
       <div className="page--startup__button page__item">
-        <Button onClick={handleGameStart}>Play{!twitchConnection.connected ? " Solo" : ""}</Button>
+        <Button onClick={handleGameStart} countdown={game.isAutoplay}>
+          {`Play${!twitchConnection.connected ? " Solo" : ""}`}
+        </Button>
       </div>
       <div className="page--startup__box op--right page__item">
         <p className="page--startup__box__header">Play tips!</p>

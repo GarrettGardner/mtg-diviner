@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@client/redux";
+import { useTimeout } from "@client/hooks";
 import { APP_PAGE, APP_STATUS, appFacade } from "@client/features/app";
 import { Button, Leaderboard, LevelDetail, SelectorLevel } from "@client/features/common";
 import { CARD_STATUS, GAME_STATUS, ILevel, LEVEL_IDS, defaultLevel, gameFacade, initialLevelPool } from "@client/features/game";
@@ -41,15 +42,15 @@ export const PageResults = () => {
     }
   };
 
-  const handleGameNextLevel = () => {
-    if (app.status === APP_STATUS.ACTIVE) {
-      dispatch(appFacade.thunk.transitionOutPage(() => dispatch(gameFacade.thunk.levelInitialize(levelID))));
-    }
-  };
+  useTimeout(() => handleButton(), 5000, game.isAutoplay);
 
-  const handleGameRestart = () => {
+  const handleButton = () => {
     if (app.status === APP_STATUS.ACTIVE) {
-      dispatch(appFacade.thunk.transitionPage(APP_PAGE.STARTUP));
+      if (game.status === GAME_STATUS.INACTIVE) {
+        dispatch(appFacade.thunk.transitionOutPage(() => dispatch(gameFacade.thunk.levelInitialize(levelID))));
+      } else if (game.status === GAME_STATUS.LOST) {
+        dispatch(appFacade.thunk.transitionPage(APP_PAGE.STARTUP));
+      }
     }
   };
 
@@ -74,13 +75,17 @@ export const PageResults = () => {
           <>
             <SelectorLevel labelText={`Next: Level ${game.levelNumberNext}`} levelID={levelID} levels={levelPoolChoices} onSelect={setLevelID} />
             <p>
-              <Button onClick={handleGameNextLevel}>Next Level</Button>
+              <Button onClick={handleButton} countdown={game.isAutoplay}>
+                Next Level
+              </Button>
             </p>
           </>
         )}
         {game.status === GAME_STATUS.LOST && (
           <p>
-            <Button onClick={handleGameRestart}>Try again?</Button>
+            <Button onClick={handleButton} countdown={game.isAutoplay}>
+              Try again?
+            </Button>
           </p>
         )}
       </div>
