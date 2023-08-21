@@ -53,7 +53,7 @@ export const extractManaCost = (input: string): Array<string> => {
   let cost: string[] = [];
   const costInput = input.replaceAll("{", "");
   costInput.split("}").forEach((costCurrent) => {
-    const costItem = costCurrent.replace("/", "").toLowerCase();
+    const costItem = costCurrent.replaceAll("/", "").toLowerCase();
     if (costItem.length > 0) {
       cost.push(costItem);
     }

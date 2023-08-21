@@ -9,6 +9,8 @@ Garrett Gardner (hello@garrett-gardner.com)
 ## Version History
 
 - v1.1
+  - Fix latest set level to just expansions (v1.1.2)
+  - Fix split phyrexian costs (v1.1.2)
   - Fix level bug (v1.1.1)
   - Redo the levelling system to something way cooler (v1.1.0)
 - v1.0

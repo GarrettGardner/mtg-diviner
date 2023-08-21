@@ -104,6 +104,7 @@ export const initialLevelPool: ILevel[] = [
     maxNumber: 3,
     params: {
       [LEVEL_PARAM_KEYS.IS_LATEST_EXPANSION]: "true",
+      [LEVEL_PARAM_KEYS.SET_TYPE]: "expansion",
     },
   },
   {
