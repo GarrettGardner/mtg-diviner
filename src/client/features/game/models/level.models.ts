@@ -125,7 +125,7 @@ export const initialLevelPool: ILevel[] = [
     isStarter: true,
     labelMain: "Planeswalkers",
     labelSub: "Card Type",
-    maxNumber: 3,
+    maxNumber: 2,
     params: {
       [LEVEL_PARAM_KEYS.IN_BOOSTER]: "true",
       [LEVEL_PARAM_KEYS.IS_PLANESWALKER]: "true",
