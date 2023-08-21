@@ -3,6 +3,7 @@ import { ICard, ILeaderboardPlayer } from "@client/features/game";
 export interface IButtonProps {
   children?: React.ReactNode;
   classes?: string;
+  countdown?: boolean;
   onClick: () => void;
 }
 

@@ -1,0 +1,12 @@
+.icon-button--autoplay {
+  right: 138px;
+  top: 32px;
+
+  &::before {
+    background-image: url("../images/icon-autoplay.png");
+  }
+
+  &.op--enabled::before {
+    background-image: url("../images/icon-autoplay-stop.png");
+  }
+}

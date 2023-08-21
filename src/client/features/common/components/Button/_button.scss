@@ -1,3 +1,7 @@
+@use "sass:math";
+
+$countdownLength: 5;
+
 .button {
   align-items: center;
   background: $color-purple;
@@ -36,6 +40,33 @@
 
   span {
     position: relative;
+  }
+
+  .button__countdown {
+    &::before {
+      animation: countdownButton #{$countdownLength}s step-end 0s 1 normal forwards;
+      content: "(5)";
+      font-weight: 300;
+      padding-left: 8px;
+    }
+
+    @at-root {
+      @keyframes countdownButton {
+        0% {
+          content: "(#{$countdownLength})";
+        }
+
+        @for $i from 1 through $countdownLength {
+          #{ math.div(100% * $i, $countdownLength) } {
+            content: "(#{$countdownLength - $i})";
+          }
+        }
+
+        100% {
+          content: "(0)";
+        }
+      }
+    }
   }
 
   &:hover,

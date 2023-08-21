@@ -2,6 +2,7 @@ export * from "./Button/Button";
 export * from "./Card/Card";
 export * from "./GuessInput/GuessInput";
 export * from "./IconButton/IconButton";
+export * from "./IconButtonAutoplay/IconButtonAutoplay";
 export * from "./IconButtonFullscreen/IconButtonFullscreen";
 export * from "./IconButtonMute/IconButtonMute";
 export * from "./Leaderboard/Leaderboard";

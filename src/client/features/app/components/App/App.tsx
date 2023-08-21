@@ -4,7 +4,7 @@ import { GAME_STATUS, GameEngine, gameFacade } from "@client/features/game";
 import { TwitchConnection } from "@client/features/twitch-connection";
 import { PageError, PageLevel, PageResults, PageStartup } from "@client/features/page";
 import { SoundStage } from "@client/features/sound-stage";
-import { IconButtonMute, IconButtonFullscreen, PausedOverlay } from "@client/features/common";
+import { IconButtonAutoplay, IconButtonFullscreen, IconButtonMute, PausedOverlay } from "@client/features/common";
 import { APP_PAGE, APP_STATUS, appFacade } from "@client/features/app";
 import { VERSION } from "@client/utils";
 
@@ -43,6 +43,7 @@ export const App = () => {
               {app.page === APP_PAGE.STARTUP && <PageStartup />}
               {app.page === APP_PAGE.GAME_ROUND && <PageLevel />}
               {app.page === APP_PAGE.RESULTS && <PageResults />}
+              <IconButtonAutoplay />
               <IconButtonMute />
               <IconButtonFullscreen />
             </>
