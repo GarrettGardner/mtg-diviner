@@ -27,6 +27,7 @@ app.get("/", (req, res) => {
 app.get("/cards", (req, res) => {
   let SQLwhere = [];
   let SQLparams = [];
+  let SQLgrouping = `name`;
 
   const query = req.query;
 
@@ -58,6 +59,7 @@ app.get("/cards", (req, res) => {
 
     const isPlaneswalker = query.isPlaneswalker;
     if (isPlaneswalker === "true") {
+      SQLgrouping = `type`;
       SQLwhere.push(`(is_planeswalker = true)`);
     } else if (isPlaneswalker === "false") {
       SQLwhere.push(`(is_planeswalker = false)`);
@@ -97,7 +99,16 @@ app.get("/cards", (req, res) => {
     }
   }
 
-  const SQLselect = `SELECT * FROM card ${SQLwhere.length ? `WHERE ${SQLwhere.join(" AND ")}` : ``} ORDER BY RANDOM() LIMIT 24;`;
+  const SQLselect = `
+    SELECT * FROM (
+      SELECT DISTINCT ON(${SQLgrouping}) * FROM (
+        SELECT * FROM card ORDER BY RANDOM()
+      ) as innercard ORDER BY ${SQLgrouping}
+    ) as card
+    ${SQLwhere.length ? `WHERE ${SQLwhere.join(" AND ")}` : ``}
+    ORDER BY RANDOM()
+    LIMIT 24;
+  `;
 
   dbpool
     .query(SQLselect, SQLparams)
