@@ -212,6 +212,7 @@ const processDB = async () => {
 
   let numberSkipped = 0;
   let numberInserted = 0;
+  let numberError = 0;
   const query = `
     INSERT INTO card (
       id,
@@ -267,6 +268,7 @@ const processDB = async () => {
       hasError = true;
     });
     if (hasError) {
+      numberError++;
       return;
     } else {
       logAction(LOG_TYPE.SUCCESS, `DB Insert success.`, JSON.stringify([card.id, card.name]));
@@ -275,7 +277,7 @@ const processDB = async () => {
   };
 
   const endProcess = () => {
-    const message = `DB Process completed successfully: ${numberInserted} cards inserted, ${numberSkipped} cards skipped.`;
+    const message = `DB Process completed successfully: ${numberInserted} cards inserted, ${numberSkipped} cards skipped, ${numberError} cards errored.`;
     logAction(LOG_TYPE.COMPLETE, message);
     console.log(message);
   };
