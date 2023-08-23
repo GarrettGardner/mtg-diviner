@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 
 export function useTimeout(callback: () => void, delay: number, dependency: boolean) {
   const callbackRef = useRef(callback);
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>();
 
   useEffect(() => {
     callbackRef.current = callback;
@@ -12,8 +12,12 @@ export function useTimeout(callback: () => void, delay: number, dependency: bool
     if (dependency) {
       timeoutRef.current = setTimeout(() => callbackRef.current(), delay);
     } else {
-      clearTimeout(timeoutRef.current);
+      timeoutRef.current ? clearTimeout(timeoutRef.current) : undefined;
     }
-    return () => clearTimeout(timeoutRef.current);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [dependency]);
 }
