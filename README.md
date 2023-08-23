@@ -9,6 +9,7 @@ Garrett Gardner (hello@garrett-gardner.com)
 ## Version History
 
 - v1.1
+  - Add logic to avoid duplicate names in rounds and duplicate planeswalkers in planeswalker round (v1.1.5)
   - Remove content warning cards from DB (v1.1.5)
   - Add typescript rules (v1.1.5)
   - Add autoplay option (v1.1.4)
