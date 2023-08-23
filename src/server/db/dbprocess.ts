@@ -78,6 +78,11 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     return;
   }
 
+  if (cardScryfall?.content_warning) {
+    logAction(LOG_TYPE.SKIP, `Card has a content warning.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
+    return;
+  }
+
   const cost = cardScryfall?.card_faces?.[0]?.mana_cost || cardScryfall?.mana_cost || "";
 
   const image_art = cardScryfall?.card_faces?.[0]?.image_uris?.art_crop || cardScryfall?.image_uris?.art_crop;
