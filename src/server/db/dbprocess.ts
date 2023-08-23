@@ -201,14 +201,26 @@ const parseCard = (cardScryfall: any): Card | undefined => {
 };
 
 const processDB = async () => {
+  let outputTxtError = false;
   await fse.writeFile(PATH_OUTPUT_TXT, "").catch((e: Error) => {
-    logAction(LOG_TYPE.ERROR, `Output.txt file overwrite error: ${e.stack}`);
+    logAction(LOG_TYPE.ERROR, `output.txt file overwrite error: ${e.stack}`);
+    outputTxtError = true;
   });
 
+  if (outputTxtError) {
+    return;
+  }
+
+  let updateSQLError = false;
   const updateSQL = await fse.readFileSync(PATH_SCHEMA_SQL).toString();
   await dbpool.query(updateSQL).catch((e: Error) => {
     logAction(LOG_TYPE.ERROR, `DB Update error: ${e.stack}`);
+    updateSQLError = true;
   });
+
+  if (updateSQLError) {
+    return;
+  }
 
   let numberSkipped = 0;
   let numberInserted = 0;
