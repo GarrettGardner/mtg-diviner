@@ -102,10 +102,11 @@ app.get("/cards", (req, res) => {
   const SQLselect = `
     SELECT * FROM (
       SELECT DISTINCT ON(${SQLgrouping}) * FROM (
-        SELECT * FROM card ORDER BY RANDOM()
+        SELECT * FROM card
+        ${SQLwhere.length ? `WHERE ${SQLwhere.join(" AND ")}` : ``}
+        ORDER BY RANDOM()
       ) as innercard ORDER BY ${SQLgrouping}
     ) as card
-    ${SQLwhere.length ? `WHERE ${SQLwhere.join(" AND ")}` : ``}
     ORDER BY RANDOM()
     LIMIT 24;
   `;
