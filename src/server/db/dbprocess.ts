@@ -78,6 +78,11 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     return;
   }
 
+  if (cardScryfall?.content_warning) {
+    logAction(LOG_TYPE.SKIP, `Card has a content warning.`, JSON.stringify([cardScryfall.id, cardScryfall.name]));
+    return;
+  }
+
   const cost = cardScryfall?.card_faces?.[0]?.mana_cost || cardScryfall?.mana_cost || "";
 
   const image_art = cardScryfall?.card_faces?.[0]?.image_uris?.art_crop || cardScryfall?.image_uris?.art_crop;
@@ -196,17 +201,30 @@ const parseCard = (cardScryfall: any): Card | undefined => {
 };
 
 const processDB = async () => {
+  let outputTxtError = false;
   await fse.writeFile(PATH_OUTPUT_TXT, "").catch((e: Error) => {
-    logAction(LOG_TYPE.ERROR, `Output.txt file overwrite error: ${e.stack}`);
+    logAction(LOG_TYPE.ERROR, `output.txt file overwrite error: ${e.stack}`);
+    outputTxtError = true;
   });
 
+  if (outputTxtError) {
+    return;
+  }
+
+  let updateSQLError = false;
   const updateSQL = await fse.readFileSync(PATH_SCHEMA_SQL).toString();
   await dbpool.query(updateSQL).catch((e: Error) => {
     logAction(LOG_TYPE.ERROR, `DB Update error: ${e.stack}`);
+    updateSQLError = true;
   });
+
+  if (updateSQLError) {
+    return;
+  }
 
   let numberSkipped = 0;
   let numberInserted = 0;
+  let numberError = 0;
   const query = `
     INSERT INTO card (
       id,
@@ -262,6 +280,7 @@ const processDB = async () => {
       hasError = true;
     });
     if (hasError) {
+      numberError++;
       return;
     } else {
       logAction(LOG_TYPE.SUCCESS, `DB Insert success.`, JSON.stringify([card.id, card.name]));
@@ -270,7 +289,7 @@ const processDB = async () => {
   };
 
   const endProcess = () => {
-    const message = `DB Process completed successfully: ${numberInserted} cards inserted, ${numberSkipped} cards skipped.`;
+    const message = `DB Process completed successfully: ${numberInserted} cards inserted, ${numberSkipped} cards skipped, ${numberError} cards errored.`;
     logAction(LOG_TYPE.COMPLETE, message);
     console.log(message);
   };

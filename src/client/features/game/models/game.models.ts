@@ -1,4 +1,4 @@
-import { ILevel, LEVEL_DIFFICULTY_KEY } from "@client/features/game";
+import { ILevel, LEVEL_DIFFICULTY_KEY, defaultLevel } from "@client/features/game";
 
 export const MAX_CARDS = 24;
 
@@ -42,7 +42,7 @@ export interface ICard {
   set: string;
   set_type: string;
   solved?: number;
-  solvers?: string[];
+  solvers: string[];
   status: CARD_STATUS;
   type: string;
 }
@@ -80,7 +80,7 @@ export interface IGame {
   difficulty?: LEVEL_DIFFICULTY_KEY;
   isAutoplay: boolean;
   leaderboard: ILeaderboardPlayer[];
-  levelActive?: ILevel;
+  levelActive: ILevel;
   levelNumber: number;
   levelNumberNext: number;
   levelPool: ILevel[];
@@ -98,6 +98,7 @@ export const initialGame: IGame = {
   cards: [],
   isAutoplay: false,
   leaderboard: [],
+  levelActive: defaultLevel,
   levelNumber: 1,
   levelNumberNext: 0,
   levelPool: [],

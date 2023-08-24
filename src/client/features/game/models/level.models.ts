@@ -10,7 +10,7 @@ export interface ILevelDifficulty {
   pointsSkip: number;
 }
 
-export const levelModifierDifficulty: { [key in LEVEL_DIFFICULTY_KEY]: ILevelDifficulty } = {
+export const levelModifierDifficulty: Record<LEVEL_DIFFICULTY_KEY, ILevelDifficulty> = {
   [LEVEL_DIFFICULTY_KEY.EASY]: {
     pointsPass: 8,
     pointsSkip: 16,
@@ -40,9 +40,7 @@ export enum LEVEL_PARAM_KEYS {
   SET_TYPE = "setType",
 }
 
-export type ILevelParams = {
-  [key in LEVEL_PARAM_KEYS]?: string;
-};
+export type ILevelParams = Record<LEVEL_PARAM_KEYS, string> | {};
 
 export interface ILevelModifiers {
   labelMain: string;
