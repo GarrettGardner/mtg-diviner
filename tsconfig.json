@@ -5,12 +5,14 @@
     "jsx": "react",
     "lib": ["es2021", "dom"],
     "module": "commonjs",
+    "moduleResolution": "node",
     "noEmitOnError": true,
     "noImplicitAny": true,
     "paths": {
       "@client/*": ["./src/client/*"]
     },
     "removeComments": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "es5"
