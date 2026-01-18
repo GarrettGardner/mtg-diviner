@@ -136,7 +136,9 @@ const parseCard = (cardScryfall: any): Card | undefined => {
     logAction(LOG_TYPE.ERROR, `Malformed card structure: Released At.`, JSON.stringify(cardScryfall));
     return;
   }
-  if (Date.parse(date) >= Date.now()) {
+  const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
+  const inTwoWeeks = Date.now() + twoWeeksMs;
+  if (Date.parse(date) >= inTwoWeeks) {
     logAction(LOG_TYPE.SKIP, `Card is not released yet.`, JSON.stringify([cardScryfall.id, cardScryfall.name, date]));
     return;
   }
